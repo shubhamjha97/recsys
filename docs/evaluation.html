@@ -52,11 +52,15 @@ truth&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;numpy&nbsp;array&nbsp;containing&nbs
 &nbsp;<br>
 Returns:<br>
 rho&nbsp;(float):&nbsp;Spearman&nbsp;Rank&nbsp;Correlation</tt></dd></dl>
- <dl><dt><a name="-top_k_precision"><strong>top_k_precision</strong></a>(pred, test, user_means, user_map, k<font color="#909090">=5</font>)</dt><dd><tt>Calculate&nbsp;Precision@top&nbsp;k.<br>
+ <dl><dt><a name="-top_k_precision"><strong>top_k_precision</strong></a>(pred, test, means_, map_, k<font color="#909090">=5</font>, user_<font color="#909090">=True</font>)</dt><dd><tt>Calculate&nbsp;Precision@top&nbsp;k.<br>
 &nbsp;<br>
 Inputs:<br>
 pred&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;numpy&nbsp;array&nbsp;containing&nbsp;predicted&nbsp;values.<br>
-truth&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;numpy&nbsp;array&nbsp;containing&nbsp;the&nbsp;ground&nbsp;truth&nbsp;values.<br>
+test&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;numpy&nbsp;array&nbsp;containing&nbsp;the&nbsp;ground&nbsp;truth&nbsp;values.<br>
+means_&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;user/item&nbsp;means<br>
+map_&nbsp;(python&nbsp;dictionary):&nbsp;user&nbsp;map&nbsp;or&nbsp;item&nbsp;map<br>
+k&nbsp;(int):&nbsp;value&nbsp;of&nbsp;k<br>
+user_&nbsp;(bool):<br>
 &nbsp;<br>
 Returns:<br>
 (float):&nbsp;average&nbsp;Precision@top&nbsp;k.</tt></dd></dl>

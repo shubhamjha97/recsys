@@ -15,7 +15,7 @@ Course Assignment for CS F469- Information Retrieval @ BITS Pilani, Hyderabad Ca
 * [Introduction](#introduction)
 * [Data](#data)
 * [Directory Structure:](#directory-structure-)
-* [Vanilla Collaborative Filtering](#vanilla-collaborative-filtering)
+* [Basic Collaborative Filtering](#basic-collaborative-filtering)
 * [Collaborative Filtering with baseline](#collaborative-filtering-with-baseline)
 - [SVD](#svd-1)
 * [CUR](#cur-1)
@@ -55,7 +55,7 @@ python CUR.py
 ```
 ## Introduction
 Collaborative filtering is a method of making automatic predictions (filtering) about the interests of a user by collecting preferences or taste information from many users (collaborating). The main purpose of this project is understand how the following collaborative filtering algorithms work-
-1. Vanilla Approach
+1. Basic Approach
 2. Baseline Approach
 3. SVD Decomposition Approach
 4. CUR Decomposition Approach
@@ -95,17 +95,12 @@ recsys_final/
 +--  recsys_utils.py (python script containing functions for loading matrices and mappings) 
 ```
 
-## Vanilla Collaborative Filtering
-<img src="images/collab.png" width="100" height="100">
-![Collab eq](images/collab.png | width=10)
-![Collab eq2](images/collab_2.png)
-
-While predicting rating, the ratings of the 10 most similar users are used.
+## Basic Collaborative Filtering
+While predicting ratings, the ratings of the 10 most similar users are used.
 
 ## Collaborative Filtering with baseline
-![Collab baseline eq](images/collab_baseline.png)
-![Collab baseline eq2](images/collab_baseline_2.png)
-![Collab baseline eq3](images/collab_bseline_3.png)
+While predicting ratings, the ratings of the 10 most similar users are used.
+
 
 ## SVD
 No. of singular values retained= 1088 (90% energy)
@@ -138,9 +133,3 @@ OS: Ubuntu 16.04 LTS
 [Abhinav Jain](http://github.com/abhinav1112)
 
 [Saurabh Khandelwal](http://github.com/stgstg27)
-
-
-# TO ADD
-Results
-SVD, CUR no. of values retained
-formulae

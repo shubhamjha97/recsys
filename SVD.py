@@ -86,11 +86,6 @@ if __name__=='__main__':
 	user_map=recsys_utils.read_user_map()
 	movie_map=recsys_utils.read_movie_map()
 
-	# load matrices
-	# U=np.load(open('temp_data/U.npy', 'r+'))
-	# V_t=np.load(open('temp_data/V_t.npy', 'r+'))
-	# sigma=np.load(open('temp_data/sigma.npy', 'r+'))
-
 	start_time=time()
 
 	# Subtract means from train

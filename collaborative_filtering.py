@@ -31,10 +31,8 @@ def subtract_mean(mat_):#,type='user'):
 	mask= mat!=0
 	nonzero_vals=np.array(np.nonzero(mat))
 	nonzero_vals= zip(nonzero_vals[0], nonzero_vals[1])
-	#temp_start_time=time()
 	for val in nonzero_vals:
 		mat[val[0], val[1]]-=means_mat[val[0]]
-	#print 'Time taken:', time()-temp_start_time
 	return mat
 
 def predict(mat, dist_mat, test, user_map, movie_map, n=10, mode='user'):
@@ -55,13 +53,9 @@ def predict(mat, dist_mat, test, user_map, movie_map, n=10, mode='user'):
 	pred (1D numpy array): array containing predictions to the test data.
 	'''
 	pred=[]
-	# no_of_zero = 0
-	# no_of_ratings = 0
 	if mode=='user':
 		# iterate over test cases
-		# temp_i=0
-		# print 'i:', temp_i
-		for idx,row in tqdm(test.iterrows()): #########remove head
+		for idx,row in test.iterrows():
 			dist=np.reshape(dist_mat[:, user_map[row['userId']]], [len(dist_mat),1])
 			usr_ratings=mat[:, movie_map[row['movieId']]].todense()
 			temp_rating_dist=zip(dist.tolist(), usr_ratings.tolist())
@@ -74,7 +68,6 @@ def predict(mat, dist_mat, test, user_map, movie_map, n=10, mode='user'):
 				if c>=n:
 					break
 				elif temp_rating_dist[i][1][0]!=0:
-					#print 'Dist:', temp_rating_dist[i][0][0], 'Rating:', temp_rating_dist[i][1][0]
 					rating+=temp_rating_dist[i][1][0]*temp_rating_dist[i][0][0]
 					den+=temp_rating_dist[i][0][0]
 				c+=1
@@ -82,20 +75,15 @@ def predict(mat, dist_mat, test, user_map, movie_map, n=10, mode='user'):
 				den=1
 			rating=rating/den
 			pred.append(rating)
-			# if rating==0:
-			# 	no_of_zero+=1
-			# print 'Truth:', row['rating'], 'Pred:', rating, 'i:',temp_i, '/', test.shape[0]
-			# temp_i+=1
+
 
 	else:
-		# i=0
-		for idx,row in tqdm(test.iterrows()): #########remove head
+		for idx,row in test.iterrows():
 			dist=np.reshape(dist_mat[:, movie_map[row['movieId']]], [len(dist_mat),1])
 			movie_ratings=mat[:, user_map[row['userId']]].todense()
 			temp_rating_dist=zip(dist.tolist(), movie_ratings.tolist())
 			temp_rating_dist.sort(reverse=True)
 			temp_rating_dist=temp_rating_dist[1:]
-			# no_of_ratings+=1
 			rating=0
 			c=1
 			den=0
@@ -103,7 +91,6 @@ def predict(mat, dist_mat, test, user_map, movie_map, n=10, mode='user'):
 				if c>=n:
 					break
 				elif temp_rating_dist[i][1][0]!=0:
-					#print 'Dist:', temp_rating_dist[i][0][0], 'Rating:', temp_rating_dist[i][1][0]
 					rating+=temp_rating_dist[i][1][0]*temp_rating_dist[i][0][0]
 					den+=temp_rating_dist[i][0][0]
 				c+=1
@@ -111,29 +98,21 @@ def predict(mat, dist_mat, test, user_map, movie_map, n=10, mode='user'):
 				den=1
 			rating=rating/den
 			pred.append(rating)
-			# if rating==0:
-				# no_of_zero+=1	
-			# print 'Truth:', row['rating'], 'Pred:', rating, i, '/', test.shape[0]
-			# i+=1
-
 	return np.array(pred)
 
 if __name__=='__main__':
 
 	# Read files	
 	train=recsys_utils.read_train(sparse=True)
-	# print train.shape
 	test=recsys_utils.read_test_table().head(10000)
-	truth=test['rating'].head(10000).as_matrix() ##########
+	truth=test['rating'].head(10000).as_matrix()
 	user_map=recsys_utils.read_user_map()
 	movie_map=recsys_utils.read_movie_map()
 
-	user_means=np.squeeze(np.sum(np.array(train.todense()), axis=1))
-	item_means=np.squeeze(np.sum(np.array(train.T.todense()), axis=1))
-	# print 'means', user_means.shape, item_means.shape
-
 	# User-user collaborative filtering
 	# user_means=np.squeeze(np.sum(np.array(train.todense()), axis=1))
+	user_means=np.squeeze(np.sum(np.array(train.todense()), axis=1))
+	user_means=np.divide(user_means, (np.array(train.todense())!=0).sum(1))
 	print 'User-user collaborative filtering....'
 	start_time_user=time()
 	user_dist=1-pairwise_distances(subtract_mean(train.astype('float32')), metric='cosine')
@@ -147,6 +126,8 @@ if __name__=='__main__':
 
 	# Item-item collaborative filtering
 	# item_means=np.squeeze(np.sum(np.array(train.T.todense()), axis=1))
+	item_means=np.squeeze(np.sum(np.array(train.T.todense()), axis=1))
+	item_means=np.divide(user_means, (np.array(train.T.todense())!=0).sum(1))
 	print 'Item-item collaborative filtering....'
 	start_time_item=time()
 	item_dist=1-pairwise_distances(subtract_mean(train.T.astype('float32')), metric='cosine')

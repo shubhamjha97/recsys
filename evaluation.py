@@ -34,8 +34,12 @@ def top_k_precision(pred, test, means_, map_, k=5, user_=True):
 
 	Inputs:
 	pred (1D numpy array): numpy array containing predicted values.
-	truth (1D numpy array): numpy array containing the ground truth values.
-
+	test (1D numpy array): numpy array containing the ground truth values.
+	means_ (1D numpy array): user/item means
+	map_ (python dictionary): user map or item map
+	k (int): value of k
+	user_ (bool):
+	
 	Returns:
 	(float): average Precision@top k.
 	'''
@@ -63,7 +67,6 @@ def top_k_precision(pred, test, means_, map_, k=5, user_=True):
 		temp_df['rating']=temp_df['rating']>=THRESHOLD
 		temp_df['prediction']=temp_df['prediction']>=THRESHOLD
 		no_equals = temp_df[temp_df["rating"] == temp_df["prediction"]].shape[0]
-		print temp_df.shape
 		temp_precision=no_equals/float(temp_df.shape[0])
 		# print no_equals, temp_precision
 		precision_list.append(temp_precision)
