@@ -75,7 +75,7 @@ The data was shuffled and then split to create train(80%) and test(20%) sets.
 
 ## Directory Structure:
 
-```python
+```
 recsys_final/
 +-- data
 |   +-- ratings.dat (original data file containing ratings)
