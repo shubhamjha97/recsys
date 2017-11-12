@@ -1,0 +1,56 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module collaborative_filtering</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>collaborative_filtering</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/shubham/Desktop/recsys_final/collaborative_filtering.py">/home/shubham/Desktop/recsys_final/collaborative_filtering.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="evaluation.html">evaluation</a><br>
+</td><td width="25%" valign=top><a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top><a href="recsys_utils.html">recsys_utils</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-predict"><strong>predict</strong></a>(mat, dist_mat, test, user_map, movie_map, n<font color="#909090">=10</font>, mode<font color="#909090">='user'</font>)</dt><dd><tt>Function&nbsp;to&nbsp;predict&nbsp;the&nbsp;ratings&nbsp;by&nbsp;users&nbsp;on&nbsp;movies&nbsp;in&nbsp;the&nbsp;test&nbsp;dataframe.<br>
+This&nbsp;function&nbsp;implements&nbsp;both&nbsp;user-user&nbsp;and&nbsp;item-ite&nbsp;collaborative&nbsp;filtering.<br>
+&nbsp;<br>
+Inputs:<br>
+mat&nbsp;(2D&nbsp;numpy&nbsp;array):&nbsp;input&nbsp;train&nbsp;matrix<br>
+dist_mat&nbsp;(2D&nbsp;numpy&nbsp;array):&nbsp;matrix&nbsp;where&nbsp;the&nbsp;[i,&nbsp;j]th&nbsp;element&nbsp;is&nbsp;the&nbsp;cosine&nbsp;similarity&nbsp;between&nbsp;the&nbsp;ith&nbsp;and&nbsp;jth&nbsp;item/user.<br>
+test(pandas&nbsp;dataframe):&nbsp;pandas&nbsp;test&nbsp;dataframe<br>
+user_map&nbsp;(python&nbsp;dict):&nbsp;user&nbsp;mappings<br>
+movie_map&nbsp;(python&nbsp;dict):&nbsp;movie&nbsp;mappings<br>
+n&nbsp;(int):&nbsp;Number&nbsp;of&nbsp;most&nbsp;similar&nbsp;users/items&nbsp;to&nbsp;consider&nbsp;for&nbsp;prediction<br>
+mode&nbsp;['user',&nbsp;'item']<br>
+&nbsp;<br>
+Returns:<br>
+pred&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;array&nbsp;containing&nbsp;predictions&nbsp;to&nbsp;the&nbsp;test&nbsp;data.</tt></dd></dl>
+ <dl><dt><a name="-subtract_mean"><strong>subtract_mean</strong></a>(mat_)</dt><dd><tt>Subtract&nbsp;row&nbsp;means&nbsp;from&nbsp;matrix&nbsp;mat_.<br>
+Inputs:<br>
+mat_&nbsp;(2D&nbsp;numpy&nbsp;array):&nbsp;matrix&nbsp;from&nbsp;which&nbsp;the&nbsp;mean&nbsp;needs&nbsp;to&nbsp;be&nbsp;subtracted.<br>
+&nbsp;<br>
+Returns:<br>
+mat&nbsp;(2D&nbsp;numpy&nbsp;array):&nbsp;Matrix&nbsp;with&nbsp;row&nbsp;means&nbsp;subtracted.</tt></dd></dl>
+ <dl><dt><a name="-time"><strong>time</strong></a>(...)</dt><dd><tt><a href="#-time">time</a>()&nbsp;-&gt;&nbsp;floating&nbsp;point&nbsp;number<br>
+&nbsp;<br>
+Return&nbsp;the&nbsp;current&nbsp;time&nbsp;in&nbsp;seconds&nbsp;since&nbsp;the&nbsp;Epoch.<br>
+Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;the&nbsp;system&nbsp;clock&nbsp;provides&nbsp;them.</tt></dd></dl>
+</td></tr></table>
+</body></html>

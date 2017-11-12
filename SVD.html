@@ -1,0 +1,60 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module SVD</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>SVD</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/shubham/Desktop/recsys_final/SVD.py">/home/shubham/Desktop/recsys_final/SVD.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="evaluation.html">evaluation</a><br>
+<a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+<a href="pandas.html">pandas</a><br>
+</td><td width="25%" valign=top><a href="recsys_utils.html">recsys_utils</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-SVD"><strong>SVD</strong></a>(mat, percent_energy_retain<font color="#909090">=90</font>, save_factorized<font color="#909090">=False</font>)</dt><dd><tt>Function&nbsp;to&nbsp;perform&nbsp;SVD&nbsp;decomposition&nbsp;of&nbsp;a&nbsp;matrix.&nbsp;This&nbsp;function<br>
+also&nbsp;provides&nbsp;functionality&nbsp;to&nbsp;reduce&nbsp;number&nbsp;of&nbsp;eigenvalues&nbsp;to&nbsp;reduce&nbsp;the<br>
+dimensionality&nbsp;of&nbsp;the&nbsp;factor&nbsp;matrices.<br>
+&nbsp;<br>
+Inputs-<br>
+mat(2D&nbsp;numpy&nbsp;array):&nbsp;The&nbsp;matrix&nbsp;to&nbsp;be&nbsp;decomposed<br>
+percent_energy_retain(int):&nbsp;percentage&nbsp;of&nbsp;energy&nbsp;to&nbsp;retain<br>
+save_factorized(bool):&nbsp;If&nbsp;True,&nbsp;the&nbsp;factor&nbsp;matrices&nbsp;will&nbsp;be&nbsp;saved&nbsp;to&nbsp;disk<br>
+&nbsp;<br>
+Returns-<br>
+U(2D&nbsp;numpy&nbsp;array):&nbsp;U&nbsp;matrix<br>
+V_t(2D&nbsp;numpy&nbsp;array):&nbsp;Transpose&nbsp;of&nbsp;V&nbsp;matrix<br>
+Sigma(2D&nbsp;numpy&nbsp;array):&nbsp;Sigma&nbsp;Matrix</tt></dd></dl>
+ <dl><dt><a name="-energy_calc"><strong>energy_calc</strong></a>(vec, percent_energy_retain)</dt><dd><tt>Function&nbsp;to&nbsp;calculate&nbsp;energy&nbsp;of&nbsp;eigenvalues&nbsp;and&nbsp;return&nbsp;the&nbsp;number&nbsp;of&nbsp;<br>
+eigenvalues&nbsp;to&nbsp;use&nbsp;to&nbsp;retain&nbsp;'percent_energy_retain'%&nbsp;of&nbsp;total&nbsp;energy.<br>
+&nbsp;<br>
+Inputs-<br>
+vec(1D&nbsp;numpy&nbsp;array):&nbsp;Vector&nbsp;of&nbsp;eigenvalues<br>
+percent_energy_retain(int):&nbsp;percentage&nbsp;of&nbsp;energy&nbsp;to&nbsp;retain<br>
+&nbsp;<br>
+Returns-<br>
+index(int):&nbsp;number&nbsp;of&nbsp;largest&nbsp;eigenvalues&nbsp;to&nbsp;use.</tt></dd></dl>
+ <dl><dt><a name="-time"><strong>time</strong></a>(...)</dt><dd><tt><a href="#-time">time</a>()&nbsp;-&gt;&nbsp;floating&nbsp;point&nbsp;number<br>
+&nbsp;<br>
+Return&nbsp;the&nbsp;current&nbsp;time&nbsp;in&nbsp;seconds&nbsp;since&nbsp;the&nbsp;Epoch.<br>
+Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;the&nbsp;system&nbsp;clock&nbsp;provides&nbsp;them.</tt></dd></dl>
+</td></tr></table>
+</body></html>

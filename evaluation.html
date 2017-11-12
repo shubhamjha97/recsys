@@ -1,0 +1,64 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module evaluation</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>evaluation</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/shubham/Desktop/recsys_final/evaluation.py">/home/shubham/Desktop/recsys_final/evaluation.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-RMSE"><strong>RMSE</strong></a>(pred, truth)</dt><dd><tt>Calculate&nbsp;Root&nbsp;Mean&nbsp;Square&nbsp;Error&nbsp;(RMSE).<br>
+&nbsp;<br>
+Inputs:<br>
+pred&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;numpy&nbsp;array&nbsp;containing&nbsp;predicted&nbsp;values.<br>
+truth&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;numpy&nbsp;array&nbsp;containing&nbsp;the&nbsp;ground&nbsp;truth&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+rmse&nbsp;(float):&nbsp;The&nbsp;Root&nbsp;Mean&nbsp;Square&nbsp;Error.</tt></dd></dl>
+ <dl><dt><a name="-RMSE_mat"><strong>RMSE_mat</strong></a>(matA, matB)</dt><dd><tt>Calculate&nbsp;Root&nbsp;Mean&nbsp;Square&nbsp;Error&nbsp;(RMSE)&nbsp;between&nbsp;two&nbsp;matrices.&nbsp;Mainly&nbsp;used<br>
+to&nbsp;find&nbsp;error&nbsp;original&nbsp;and&nbsp;reconstructed&nbsp;matrices&nbsp;while&nbsp;working&nbsp;with&nbsp;<br>
+matrix&nbsp;decompositions.<br>
+&nbsp;<br>
+Inputs:<br>
+matA&nbsp;(2D&nbsp;numpy&nbsp;array):&nbsp;Matrix&nbsp;A&nbsp;<br>
+matB&nbsp;(2D&nbsp;numpy&nbsp;array):&nbsp;Matrix&nbsp;B<br>
+&nbsp;<br>
+Returns:<br>
+rmse&nbsp;(float):&nbsp;Root&nbsp;Mean&nbsp;Square&nbsp;Error.</tt></dd></dl>
+ <dl><dt><a name="-spearman_rank_correlation"><strong>spearman_rank_correlation</strong></a>(pred, truth)</dt><dd><tt>Calculate&nbsp;Spearman&nbsp;Rank&nbsp;Correlation.<br>
+&nbsp;<br>
+Inputs:<br>
+pred&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;numpy&nbsp;array&nbsp;containing&nbsp;predicted&nbsp;values.<br>
+truth&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;numpy&nbsp;array&nbsp;containing&nbsp;the&nbsp;ground&nbsp;truth&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+rho&nbsp;(float):&nbsp;Spearman&nbsp;Rank&nbsp;Correlation</tt></dd></dl>
+ <dl><dt><a name="-top_k_precision"><strong>top_k_precision</strong></a>(pred, test, user_means, user_map, k<font color="#909090">=5</font>)</dt><dd><tt>Calculate&nbsp;Precision@top&nbsp;k.<br>
+&nbsp;<br>
+Inputs:<br>
+pred&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;numpy&nbsp;array&nbsp;containing&nbsp;predicted&nbsp;values.<br>
+truth&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;numpy&nbsp;array&nbsp;containing&nbsp;the&nbsp;ground&nbsp;truth&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+(float):&nbsp;average&nbsp;Precision@top&nbsp;k.</tt></dd></dl>
+</td></tr></table>
+</body></html>
