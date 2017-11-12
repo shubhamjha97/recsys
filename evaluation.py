@@ -39,7 +39,7 @@ def top_k_precision(pred, test, means_, map_, k=5, user_=True):
 	map_ (python dictionary): user map or item map
 	k (int): value of k
 	user_ (bool):
-	
+
 	Returns:
 	(float): average Precision@top k.
 	'''
@@ -47,6 +47,7 @@ def top_k_precision(pred, test, means_, map_, k=5, user_=True):
 	# K=5
 	K=k
 	precision_list=[]
+	print 'test shape', test.shape, 'pred shape', pred.shape
 	test['prediction']=pred
 
 	if user_==True:

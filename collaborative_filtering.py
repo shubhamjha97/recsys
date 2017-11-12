@@ -127,7 +127,7 @@ if __name__=='__main__':
 	# Item-item collaborative filtering
 	# item_means=np.squeeze(np.sum(np.array(train.T.todense()), axis=1))
 	item_means=np.squeeze(np.sum(np.array(train.T.todense()), axis=1))
-	item_means=np.divide(user_means, (np.array(train.T.todense())!=0).sum(1))
+	item_means=np.divide(item_means, (np.array(train.T.todense())!=0).sum(1))
 	print 'Item-item collaborative filtering....'
 	start_time_item=time()
 	item_dist=1-pairwise_distances(subtract_mean(train.T.astype('float32')), metric='cosine')

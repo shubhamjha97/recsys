@@ -14,19 +14,14 @@ Course Assignment for CS F469- Information Retrieval @ BITS Pilani, Hyderabad Ca
       * [CUR](#cur)
 * [Introduction](#introduction)
 * [Data](#data)
-* [Directory Structure:](#directory-structure-)
+* [Directory Structure](#directory-structure-)
 * [Basic Collaborative Filtering](#basic-collaborative-filtering)
 * [Collaborative Filtering with baseline](#collaborative-filtering-with-baseline)
 - [SVD](#svd-1)
 * [CUR](#cur-1)
-* [Machine specs:](#machine-specs-)
+* [Machine specs](#machine-specs-)
 * [Results](#results)
 * [Members](#members)
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -39,7 +34,7 @@ python create_matrices.py
 ```
 ##### Collaborative Filtering
 ```python
-python collabortive_filtering.py
+python collaborative_filtering.py
 ```
 ##### Collaborative Filtering with Baseline Approach
 ```
@@ -97,6 +92,7 @@ recsys_final/
 
 ## Basic Collaborative Filtering
 While predicting ratings, the ratings of the 10 most similar users are used.
+More on [Collaborative Filtering](https://en.wikipedia.org/wiki/)
 
 ## Collaborative Filtering with baseline
 While predicting ratings, the ratings of the 10 most similar users are used.
@@ -104,10 +100,11 @@ While predicting ratings, the ratings of the 10 most similar users are used.
 
 ## SVD
 No. of singular values retained= 1088 (90% energy)
+More on [SVD](https://en.wikipedia.org/wiki/Singular-value_decomposition)
 
 ## CUR
 No. of columns and rows retained= 900
-
+More on [CUR](https://en.wikipedia.org/wiki/CUR_matrix_approximation)
 ## Machine specs:
 Processor: i7-7500U
 Ram: 16 GB DDR4
@@ -115,15 +112,14 @@ OS: Ubuntu 16.04 LTS
 
 ## Results
 
-| Recommender System Technique               | Root Mean Square Error (RMSE) | Precision on top K       | Spearman Rank Correlation                  | Time taken for prediction (secs) |
-|--------------------------------------------|-------------------------------|--------------------------|--------------------------------------------|----------------------------------|
-| Collaborative                              | 2.0335 (item)    2.150 (user) | 1.0 (item)    1.0 (user) | 0.9999997518 (item)    0.9999997225 (user) | 235.44 (item)    291.091 (user)  |
-| Collaborative along with Baseline approach |                               |                          |                                            |                                  |
-| SVD                                        | 1.03512426007                 | 0.654428981666           | 0.999999999839                             | 565.33                           |
-| SVD with 90% retained energy               | 1.03                          | 0.6528                   | 0.999999999839                             | 361.49                           |
-| CUR                                        |                               |                          |                                            |                                  |
-| CUR with 90% retained energy               |                               |                          |                                            |                                  |
-                                 |
+| Recommender System Technique               | Root Mean Square Error (RMSE)   | Precision on top K           | Spearman Rank Correlation            | Time taken for prediction (secs) |
+|--------------------------------------------|---------------------------------|------------------------------|--------------------------------------|----------------------------------|
+| Collaborative                              | 2.033519 (item) 2.1502(user)    | 0.6016 (item) 0.584474(user) | 0.99999975(item) 0.99999972 (user)   | 211.979 (item)  272.817 (user)   |
+| Collaborative along with Baseline approach | 1.005434 (item) 1.005434 (user) | (item) (user)                |  0.99999743 (item) 0.99999994 (user) | 323.75 (item) 340.24(user)       |
+| SVD                                        | 1.03512426007                   | 0.654428981666               | 0.999999999839                       | 565.33                           |
+| SVD with 90% retained energy               | 1.03                            | 0.6528                       | 0.999999999839                       | 361.49                           |
+| CUR                                        |                                 |                              |                                      |                                  |
+| CUR with 90% retained energy               |                                 |                              |                                      |                                  |
 
 ## Members
 [Shubham Jha](http://github.com/shubhamjha97)

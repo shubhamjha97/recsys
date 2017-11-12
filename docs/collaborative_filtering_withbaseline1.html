@@ -1014,187 +1014,186 @@ body .markdown-body
     page-break-after: avoid;
   }
 }
-</style><title>README</title></head><body><article class="markdown-body"><h1 id="recsys"><a name="user-content-recsys" href="#recsys" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>RECSYS</h1>
-<p>Implementation of various popular Collaborative Filtering algorithms in Python.</p>
-<p>Course Assignment for CS F469- Information Retrieval @ BITS Pilani, Hyderabad Campus.</p>
-<p><strong>Done under the guidance of Dr. Aruna Malapati, Assistant Professor, BITS Pilani, Hyderabad Campus.</strong></p>
-<h2 id="table-of-contents"><a name="user-content-table-of-contents" href="#table-of-contents" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Table of Contents</h2>
-<ul>
-<li><a href="#instructions-to-run-the-scripts">Instructions to run the scripts</a><ul>
-<li><a href="#create-the-train-matrix-and-the-mappings">Create the train matrix and the mappings</a></li>
-<li><a href="#collaborative-filtering">Collaborative Filtering</a></li>
-<li><a href="#collaborative-filtering-with-baseline-approach">Collaborative Filtering with Baseline Approach</a></li>
-<li><a href="#svd">SVD</a></li>
-<li><a href="#cur">CUR</a></li>
-</ul>
-</li>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#data">Data</a></li>
-<li><a href="#directory-structure-">Directory Structure</a></li>
-<li><a href="#basic-collaborative-filtering">Basic Collaborative Filtering</a></li>
-<li><a href="#collaborative-filtering-with-baseline">Collaborative Filtering with baseline</a></li>
-<li><a href="#svd-1">SVD</a></li>
-<li><a href="#cur-1">CUR</a></li>
-<li><a href="#machine-specs-">Machine specs</a></li>
-<li><a href="#results">Results</a></li>
-<li><a href="#members">Members</a></li>
-</ul>
-<p><small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small></p>
-<h2 id="instructions-to-run-the-scripts"><a name="user-content-instructions-to-run-the-scripts" href="#instructions-to-run-the-scripts" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Instructions to run the scripts</h2>
-<p>Run the following commands for the various implementations of collaborative filtering:</p>
-<h5 id="create-the-train-matrix-and-the-mappings"><a name="user-content-create-the-train-matrix-and-the-mappings" href="#create-the-train-matrix-and-the-mappings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Create the train matrix and the mappings</h5>
-<pre><code class="python">python create_matrices.py
+</style><title>collaborative_filtering_withbaseline1</title></head><body><article class="markdown-body"><h1 id="-coding-utf-8-"><a name="user-content--coding-utf-8-" href="#-coding-utf-8-" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>-<em>- coding: utf-8 -</em>-</h1>
+<p>&rdquo;&ldquo;&rdquo;<br />
+Created on Mon Oct 23 07:41:44 2017</p>
+<p>@author: Saurabh<br />
+&ldquo;&rdquo;&ldquo;</p>
+<p>import numpy as np<br />
+import recsys_utils<br />
+from scipy.spatial.distance import pdist<br />
+from scipy.sparse import csr_matrix<br />
+from sklearn.metrics.pairwise import pairwise_distances<br />
+from collections import Counter<br />
+from time import time</p>
+<h1 id="import-time"><a name="user-content-import-time" href="#import-time" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>import time</h1>
+<p>from copy import deepcopy<br />
+import evaluation</p>
+<p>train=recsys_utils.read_train(sparse = True)<br />
+test=recsys_utils.read_test_table()<br />
+truth=test[&lsquo;rating&rsquo;].as_matrix()<br />
+user_map=recsys_utils.read_user_map()<br />
+movie_map=recsys_utils.read_movie_map()</p>
+<p>def subtract_mean(mat_,type=&rsquo;user&rsquo;):<br />
+    &lsquo;&rsquo;&lsquo;<br />
+    Subtract row means from matrix mat_.<br />
+    Inputs:<br />
+    mat_ (2D numpy array): matrix from which the mean needs to be subtracted.</p>
+<pre><code>Returns:
+mat (2D numpy array): Matrix with row means subtracted.
+'''
+mat=deepcopy(mat_)
+counts=Counter(mat.nonzero()[0])
+means_mat=mat.sum(axis=1)
+means_mat=np.reshape(means_mat, [means_mat.shape[0], 1])
+for i in range(means_mat.shape[0]):
+            if i in counts.keys():
+                means_mat[i,0]=means_mat[i, 0]/float(counts[i])
+            else:
+                means_mat[i,0]=0
+# Subtract means from non zero values in the matrix
+mask= mat!=0
+nonzero_vals=np.array(np.nonzero(mat))
+nonzero_vals= zip(nonzero_vals[0], nonzero_vals[1])
+#temp_start_time=time()
+for val in nonzero_vals[]:
+    mat[val[0], val[1]]-=means_mat[val[0]]
+#print 'Time taken:', time()-temp_start_time
+return mat
 </code></pre>
+<p>def predict_baseline(mat, dist_mat, test, user_map, movie_map, n,mode,temp2,usr_mean,movie_mean):<br />
+    &lsquo;&rsquo;&lsquo;<br />
+    Function to predict the ratings by users on movies in the test dataframe.<br />
+    This function implements both user-user and item-ite collaborative filtering.</p>
+<pre><code>Inputs:
+mat (2D numpy array): input train matrix
+dist_mat (2D numpy array): matrix where the [i, j]th element is the cosine similarity between the ith and jth item/user.
+test(pandas dataframe): pandas test dataframe
+user_map (python dict): user mappings
+movie_map (python dict): movie mappings
+n (int): Number of most similar users/items to consider for prediction
+temp2 (2D numpy array): Input Matrix modified with BaseLine approach 
+mode ['user', 'item']
+usr_mean(1D numpy array) : Array of Users Mean 
+movie_mean(1D numpy array)  :Array of Movie Mean.
 
-<h5 id="collaborative-filtering"><a name="user-content-collaborative-filtering" href="#collaborative-filtering" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Collaborative Filtering</h5>
-<pre><code class="python">python collaborative_filtering.py
+Returns:
+pred (1D numpy array): array containing predictions to the test data.
+'''
+
+
+pred=[]
+print "Entered Prediction Function"
+overall_mean_movie_rating = mat.sum()/mat.count_nonzero()
+print "Overall Mean Movie Rating ",overall_mean_movie_rating
+no_of_ratings = 0
+no_of_zero = 0
+
+#mean_rating_user = baseline_Wrt_user(mat,overall_mean_movie_rating)
+
+test = test.head(10000)
+if mode=='user':
+    for idx,row in test.iterrows():
+        dist=np.reshape(dist_mat[:, user_map[row['userId']]], [len(dist_mat),1])
+
+        usr_ratings=temp2[:, movie_map[row['movieId']]].todense()
+
+        temp_rating_dist=zip(dist.tolist(), usr_ratings.tolist())
+        temp_rating_dist.sort(reverse=True)
+        temp_rating_dist=temp_rating_dist[1:]
+        rating = usr_mean[user_map[row['userId']]] + movie_mean[0,movie_map[row['movieId']]] - overall_mean_movie_rating
+        print " movie rating ::  " , movie_mean[0,movie_map[row['movieId']]] 
+        similar_rating = 0
+        c = 1
+        den = 0
+        for i  in range(len(temp_rating_dist)):
+            if c&gt;=n:
+                break
+            elif temp_rating_dist[i][1][0]!=0:
+                similar_rating+=(temp_rating_dist[i][1][0]+overall_mean_movie_rating)*temp_rating_dist[i][0][0]
+                den+=temp_rating_dist[i][0][0]
+            c+=1
+
+        if den==0:
+            den=1
+        rating+=similar_rating/den
+        if rating&gt;5:
+            rating=5
+        if rating&lt;0:
+            rating = usr_mean[user_map[row['userId']]] + movie_mean[0,movie_map[row['movieId']]] - overall_mean_movie_rating
+            #time.sleep(5)  
+        pred.append(rating)
+        print 'Truth:', row['rating'], 'Pred:', rating
+else:
+    for idx,row in test.iterrows(): #########remove head
+        dist=np.reshape(dist_mat[:, movie_map[row['movieId']]], [len(dist_mat),1])
+        movie_ratings=temp2[:, user_map[row['userId']]].todense()
+        temp_rating_dist=zip(dist.tolist(), movie_ratings.tolist())
+        temp_rating_dist.sort(reverse=True)
+        temp_rating_dist=temp_rating_dist[1:]
+        no_of_ratings+=1
+        rating=0
+        c=1
+        den=0
+        for i in range(len(temp_rating_dist)):
+            if c&gt;=n:
+                break
+            elif temp_rating_dist[i][1][0]!=0:
+                #print 'Dist:', temp_rating_dist[i][0][0], 'Rating:', temp_rating_dist[i][1][0]
+                rating+=temp_rating_dist[i][1][0]*temp_rating_dist[i][0][0]
+                den+=temp_rating_dist[i][0][0]
+            c+=1
+        if den==0:
+            den=1
+        rating=rating/den
+        pred.append(rating)
+        if rating==0:
+            rating = usr_mean[user_map[row['userId']]] + movie_mean[0,movie_map[row['movieId']]] - overall_mean_movie_rating
+            no_of_zero+=1   
+        print 'Truth:', row['rating'], 'Pred:', rating, " ",no_of_zero, " ",no_of_ratings
+return np.array(pred)
 </code></pre>
-
-<h5 id="collaborative-filtering-with-baseline-approach"><a name="user-content-collaborative-filtering-with-baseline-approach" href="#collaborative-filtering-with-baseline-approach" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Collaborative Filtering with Baseline Approach</h5>
-<pre><code>python collaborative_filtering_withbaseline.py 
-</code></pre>
-
-<h5 id="svd"><a name="user-content-svd" href="#svd" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>SVD</h5>
-<pre><code class="python">python SVD.py
-</code></pre>
-
-<h5 id="cur"><a name="user-content-cur" href="#cur" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CUR</h5>
-<pre><code class="python">python CUR.py
-</code></pre>
-
-<h2 id="introduction"><a name="user-content-introduction" href="#introduction" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Introduction</h2>
-<p>Collaborative filtering is a method of making automatic predictions (filtering) about the interests of a user by collecting preferences or taste information from many users (collaborating). The main purpose of this project is understand how the following collaborative filtering algorithms work-<br />
-1. Basic Approach<br />
-2. Baseline Approach<br />
-3. SVD Decomposition Approach<br />
-4. CUR Decomposition Approach</p>
-<p><em>More on <a href="https://en.wikipedia.org/wiki/Collaborative_filtering">Collaborative Filtering</a>.</em></p>
-<h2 id="data"><a name="user-content-data" href="#data" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Data</h2>
-<p>We used the MovieLens 1M dataset, which can be found <a href="https://grouplens.org/datasets/movielens/">here</a>. The dataset contains <em>1 million</em> ratings from 6000 users on 4000 movies. The ratings range from 1 to 5, with zeroes indicating missing ratings. The data can be found in the folder <em>data</em>.</p>
-<p>The data was shuffled and then split to create train(80%) and test(20%) sets.</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Ratings</th>
-<th>Unique users</th>
-<th>Unique movies</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Overall Dataset</td>
-<td>1000209</td>
-<td>6040</td>
-<td>3706</td>
-</tr>
-<tr>
-<td>Train Set (80%)</td>
-<td>800167</td>
-<td>6040</td>
-<td>3682</td>
-</tr>
-<tr>
-<td>Test Set (20%)</td>
-<td>200041</td>
-<td>6036</td>
-<td>3462</td>
-</tr>
-</tbody>
-</table>
-<h2 id="directory-structure"><a name="user-content-directory-structure" href="#directory-structure" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Directory Structure:</h2>
-<pre><code>recsys_final/
-+-- data
-|   +-- ratings.dat (original data file containing ratings)
-+-- temp_data
-|   +-- movie_map.pkl (movie_map in pickled format) 
-|   +-- sigma.npy (numpy file containing sigma matrix in dense representation)
-|   +-- test_table.pkl (pickled pandas dataframe conaining the test data) 
-|   +-- train.npz (numpy file containing the train matrix in sparse representation) 
-|   +-- U.npy (numpy file containing U matrix in dense representation)
-|   +-- user_map.pkl (user_map in pickled format)
-|   +-- V_t.npy (numpy file containing transpose of V matrix in dense representation)
-+--  create_matrices.py(python script to create read the data, adn create train matrix, test dataframe and user and movie mappings and save them to disk)
-+-- collaborative_filtering.py(python script to perform collaborative filtering)
-+--  CUR.py(python script to perform collaborative filtering using CUR decomposition)
-+--  evaluation.py (python script containing functions for evaluation metrics)
-+--  SVD_module.py (python script to perform collaborative filtering using SVD)
-+--  recsys_utils.py (python script containing functions for loading matrices and mappings) 
-</code></pre>
-
-<h2 id="basic-collaborative-filtering"><a name="user-content-basic-collaborative-filtering" href="#basic-collaborative-filtering" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Basic Collaborative Filtering</h2>
-<p>While predicting ratings, the ratings of the 10 most similar users are used.<br />
-More on <a href="https://en.wikipedia.org/wiki/">Collaborative Filtering</a></p>
-<h2 id="collaborative-filtering-with-baseline"><a name="user-content-collaborative-filtering-with-baseline" href="#collaborative-filtering-with-baseline" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Collaborative Filtering with baseline</h2>
-<p>While predicting ratings, the ratings of the 10 most similar users are used.</p>
-<h2 id="svd_1"><a name="user-content-svd_1" href="#svd_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>SVD</h2>
-<p>No. of singular values retained= 1088 (90% energy)<br />
-More on <a href="https://en.wikipedia.org/wiki/Singular-value_decomposition">SVD</a></p>
-<h2 id="cur_1"><a name="user-content-cur_1" href="#cur_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CUR</h2>
-<p>No. of columns and rows retained= 900<br />
-More on <a href="https://en.wikipedia.org/wiki/CUR_matrix_approximation">CUR</a></p>
-<h2 id="machine-specs"><a name="user-content-machine-specs" href="#machine-specs" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Machine specs:</h2>
-<p>Processor: i7-7500U<br />
-Ram: 16 GB DDR4<br />
-OS: Ubuntu 16.04 LTS</p>
-<h2 id="results"><a name="user-content-results" href="#results" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Results</h2>
-<table>
-<thead>
-<tr>
-<th>Recommender System Technique</th>
-<th>Root Mean Square Error (RMSE)</th>
-<th>Precision on top K</th>
-<th>Spearman Rank Correlation</th>
-<th>Time taken for prediction (secs)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Collaborative</td>
-<td>2.033519 (item) 2.1502(user)</td>
-<td>0.6016 (item) 0.584474(user)</td>
-<td>0.99999975(item) 0.99999972 (user)</td>
-<td>211.979 (item)  272.817 (user)</td>
-</tr>
-<tr>
-<td>Collaborative along with Baseline approach</td>
-<td>1.005434 (item) 1.005434 (user)</td>
-<td>(item) (user)</td>
-<td>0.99999743 (item) 0.99999994 (user)</td>
-<td>323.75 (item) 340.24(user)</td>
-</tr>
-<tr>
-<td>SVD</td>
-<td>1.03512426007</td>
-<td>0.654428981666</td>
-<td>0.999999999839</td>
-<td>565.33</td>
-</tr>
-<tr>
-<td>SVD with 90% retained energy</td>
-<td>1.03</td>
-<td>0.6528</td>
-<td>0.999999999839</td>
-<td>361.49</td>
-</tr>
-<tr>
-<td>CUR</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>CUR with 90% retained energy</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h2 id="members"><a name="user-content-members" href="#members" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Members</h2>
-<p><a href="http://github.com/shubhamjha97">Shubham Jha</a></p>
-<p><a href="http://github.com/praneetmehta">Praneet Mehta</a></p>
-<p><a href="http://github.com/abhinav1112">Abhinav Jain</a></p>
-<p><a href="http://github.com/stgstg27">Saurabh Khandelwal</a></p></article></body></html>
+<h1 id="user-user-collaborative-filtering"><a name="user-content-user-user-collaborative-filtering" href="#user-user-collaborative-filtering" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>User-user collaborative filtering</h1>
+<p>print (&lsquo;User-user collaborative filtering....&rsquo;)<br />
+print type(train)</p>
+<p>counts=Counter(train.nonzero()[0])</p>
+<p>count_movie =  Counter(train.nonzero()[1])</p>
+<p>means_mat=train.sum(axis=1)<br />
+movie_mat=train.sum(axis=0)</p>
+<p>print &ldquo;means_mat_Shape:  &ldquo;,means_mat.shape[0]<br />
+print &ldquo;Movie _mat_Shape:  &ldquo;,movie_mat.shape[1]</p>
+<p>for i in range(means_mat.shape[0]):<br />
+        if i in counts.keys():<br />
+                means_mat[i,0]=means_mat[i, 0]/counts[i]<br />
+        else:<br />
+                means_mat[i,0]=0<br />
+for i in range(movie_mat.shape[1]):<br />
+        if i in count_movie.keys():<br />
+                movie_mat[0,i]=movie_mat[0, i]/count_movie[i]<br />
+        else:<br />
+                movie_mat[0,i]=0</p>
+<p>temp=deepcopy(train)<br />
+temp2=deepcopy(train)</p>
+<p>mask= temp!=0<br />
+nonzero_vals=np.array(np.nonzero(temp))<br />
+nonzero_vals= zip(nonzero_vals[0], nonzero_vals[1])</p>
+<p>temp_start_time=time()<br />
+print len(nonzero_vals)<br />
+for val in nonzero_vals:<br />
+    temp2[val[0],val[1]] = temp2[val[0],val[1]] - means_mat[val[0]] - movie_mat[0,val[1]]</p>
+<p>print (&lsquo;Time taken:&rsquo;, time()-temp_start_time)</p>
+<p>user_dist = 1-pairwise_distances(subtract_mean(temp), metric=&rsquo;cosine&rsquo;)<br />
+start_time_item = time()<br />
+predictions_usr=predict_baseline(train, user_dist, test, user_map, movie_map, 10,&rsquo;user&rsquo;,temp2,means_mat,movie_mat)<br />
+print &lsquo;User-User-&gt; Total time:&rsquo;, time()- start_time_item<br />
+print &lsquo;User-User-&gt; RMSE:&rsquo;, evaluation.RMSE(predictions_usr, truth[0:10000])<br />
+print &lsquo;spearman_rank_correlation&rsquo;, evaluation.spearman_rank_correlation(predictions_usr, truth)</p>
+<h1 id="print-rmsepredictionstruths"><a name="user-content-print-rmsepredictionstruths" href="#print-rmsepredictionstruths" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>print RMSE(predictions,truths)</h1>
+<p>print &lsquo;Item-item collaborative filtering....&rsquo;<br />
+start_time_item=time()<br />
+item_dist=1-pairwise_distances(subtract_mean(train.T), metric=&rsquo;cosine&rsquo;)<br />
+print &lsquo;Time taken to calculate distances:&rsquo;, time()-start_time_item<br />
+predictions=predict_baseline(train.T, item_dist, test, user_map, movie_map, 10,&rsquo;item&rsquo;,temp2.T,means_mat,movie_mat)<br />
+print &lsquo;Item-item-&gt; Total time:&rsquo;, time()- start_time_item<br />
+print &lsquo;Item-item-&gt; RMSE:&rsquo;, evaluation.RMSE(predictions, truth[0:10000])<br />
+print &lsquo;spearman_rank_correlation&rsquo;, evaluation.spearman_rank_correlation(predictions, truth)</p></article></body></html>
