@@ -1,0 +1,1097 @@
+FILENAME: create_matrices.py
+
+import pandas as pd
+import numpy as np
+import cPickle as pickle
+from scipy.sparse import csr_matrix
+import scipy
+import os
+from time import time
+start_time=time()
+
+TEST_SIZE=0.2
+SPARSE=True #do not change
+SHUFFLE=True
+
+# Read file from disk
+path='data/ratings.dat'
+print 'Data path:', path
+table=pd.read_table(path, sep='::', header=None, 
+		names=['userId', 'movieId', 'rating', 'timestamp'], engine='python')
+
+no_entries=table.shape[0]
+
+# Shuffle data
+if SHUFFLE:
+	table = table.sample(frac=1).reset_index(drop=True)
+
+# Find total no. of users and movies
+movie_id_list=table['movieId'].unique()
+user_id_list=table['userId'].unique()
+no_users=len(user_id_list)
+no_movies=len(movie_id_list)
+print 'Overall dataset: total ratings=', no_entries
+print 'Overall dataset: total users=', len(user_id_list)
+print 'Overall dataset: total movies=', len(movie_id_list)
+
+# Map movies and users
+movie_map={}
+for ix, m_id in enumerate(movie_id_list):
+	movie_map[m_id]=ix
+
+user_map={}
+for ix, m_id in enumerate(user_id_list):
+	user_map[m_id]=ix
+
+# Split train and test
+train_table=table.head(int((1-TEST_SIZE)*no_entries))
+test_table=table.tail(int(TEST_SIZE*no_entries))
+
+print 'Train set: total ratings=', train_table.shape[0]
+print 'Train set: total users=', len(train_table['userId'].unique())
+print 'Train set: total movies=', len(train_table['movieId'].unique())
+
+print 'Test set: total ratings=', test_table.shape[0]
+print 'Test set: total users=', len(test_table['userId'].unique())
+print 'Test set: total movies=', len(test_table['movieId'].unique())
+
+# Create Matrices
+train = np.zeros([len(user_map), len(movie_map)])
+# test=np.zeros([len(user_map), len(movie_map)])
+
+print 'Creating matrices...'
+create_start_time=time()
+for idx,row in train_table.iterrows():
+	train[user_map[row['userId']], movie_map[row['movieId']]]=row['rating']
+
+# for idx,row in test_table.iterrows():
+# 	test[user_map[row['userId']], movie_map[row['movieId']]]=row['rating']
+print 'Time taken to create matrices:', time()-create_start_time
+
+# Sanity Check
+print 'Train:',train.shape#, 'Test:',test.shape
+print 'Density:', 100.0*float(np.count_nonzero(train))/(no_users*no_movies), '%'#, 100.0*float(np.count_nonzero(test))/(no_users*no_movies),'%'
+
+# Convert to Compressed Row Sparse
+sparse_start_time=time()
+if SPARSE: # remove
+	train=scipy.sparse.csr_matrix(train)
+	# test=scipy.sparse.csr_matrix(test)
+print 'Time taken to convert to sparse:', time()-sparse_start_time
+
+# Write Matrices to file
+if SPARSE:
+	# save npz files
+	scipy.sparse.save_npz('temp_data/train.npz', train)
+	# scipy.sparse.save_npz('temp_data/test.npz', test)
+	if 'train.npy' in os.listdir('temp_data'):
+		os.remove('temp_data/train.npy')
+	# if 'test.npy' in os.listdir('temp_data'):
+	# 	os.remove('temp_data/test.npy')
+# else:
+# 	# save npy files
+# 	np.save('temp_data/train', train)
+# 	np.save('temp_data/test', test)
+# 	if 'train.npz' in os.listdir('temp_data'):
+# 		os.remove('temp_data/train.npz')
+# 	if 'test.npz' in os.listdir('temp_data'):
+# 		os.remove('temp_data/test.npz')
+
+print 'train.npz saved to disk....'
+with open('temp_data/movie_map.pkl', 'w+') as f:
+	pickle.dump(movie_map, f)
+with open('temp_data/user_map.pkl', 'w+') as f:
+	pickle.dump(user_map, f)
+with open('temp_data/test_table.pkl', 'w+') as f:
+	pickle.dump(test_table, f)
+print 'movie_map.pkl and user_map.pkl saved to disk....'
+print 'Script runtime:', time()-start_time
+
+FILENAME: recsys_utils.py
+
+import pandas as pd
+import cPickle as pickle
+import numpy as np
+import os
+import scipy
+from scipy.sparse import load_npz
+
+def read_train(sparse=False):
+	if sparse:
+		return scipy.sparse.load_npz('temp_data/train.npz')
+	else:
+		return scipy.sparse.load_npz('temp_data/train.npz').todense()#.astype(int)
+
+def read_test_table():
+	return pickle.load(open('temp_data/test_table.pkl', 'r+'))
+
+def read_movie_map():
+	return pickle.load(open('temp_data/movie_map.pkl', 'r+'))
+
+def read_user_map():
+	return pickle.load(open('temp_data/user_map.pkl', 'r+'))
+
+if __name__=='__main__':
+	train=read_train()
+	print train.shape
+
+FILENAME: evaluation.py
+
+import numpy as np
+
+def RMSE(pred, truth):
+	'''
+	Calculate Root Mean Square Error (RMSE).
+
+	Inputs:
+	pred (1D numpy array): numpy array containing predicted values.
+	truth (1D numpy array): numpy array containing the ground truth values.
+
+	Returns:
+	rmse (float): The Root Mean Square Error.
+	'''
+	return np.sqrt(np.sum(np.square(pred-truth)/float(pred.shape[0])))
+
+def RMSE_mat(matA, matB):
+	'''
+	Calculate Root Mean Square Error (RMSE) between two matrices. Mainly used
+	to find error original and reconstructed matrices while working with 
+	matrix decompositions.
+
+	Inputs:
+	matA (2D numpy array): Matrix A 
+	matB (2D numpy array): Matrix B
+	
+	Returns:
+	rmse (float): Root Mean Square Error.
+	'''
+	return np.sqrt(np.sum(np.square(matA-matB))/(matA.shape[0]*matA.shape[1]))
+
+def top_k_precision(pred, test, means_, map_, k=5, user_=True):
+	'''
+	Calculate Precision@top k.
+
+	Inputs:
+	pred (1D numpy array): numpy array containing predicted values.
+	test (1D numpy array): numpy array containing the ground truth values.
+	means_ (1D numpy array): user/item means
+	map_ (python dictionary): user map or item map
+	k (int): value of k
+	user_ (bool):
+
+	Returns:
+	(float): average Precision@top k.
+	'''
+	# THRESHOLD=3.5
+	# K=5
+	K=k
+	precision_list=[]
+	print 'test shape', test.shape, 'pred shape', pred.shape
+	test['prediction']=pred
+
+	if user_==True:
+		# unique_users=test['userId'].unique()
+		unique_values=test['userId'].unique()
+	else:
+		# unique_users=test['movieId'].unique()
+		unique_values=test['movieId'].unique()
+
+	for val in unique_values:
+		THRESHOLD=means_[map_[val]]
+		if user_==True:
+			temp_df=test[test['userId']==val].copy(deep=True)
+		else:
+			temp_df=test[test['movieId']==val].copy(deep=True)
+		temp_df.sort_values('prediction', inplace=True, ascending=False)
+		temp_df=temp_df.head(K)
+		temp_df['rating']=temp_df['rating']>=THRESHOLD
+		temp_df['prediction']=temp_df['prediction']>=THRESHOLD
+		no_equals = temp_df[temp_df["rating"] == temp_df["prediction"]].shape[0]
+		temp_precision=no_equals/float(temp_df.shape[0])
+		# print no_equals, temp_precision
+		precision_list.append(temp_precision)
+	return np.mean(np.array(precision_list))
+
+def spearman_rank_correlation(pred, truth):
+	'''
+	Calculate Spearman Rank Correlation.
+
+	Inputs:
+	pred (1D numpy array): numpy array containing predicted values.
+	truth (1D numpy array): numpy array containing the ground truth values.
+
+	Returns:
+	rho (float): Spearman Rank Correlation
+	'''
+	d=np.sum(np.square(pred-truth))
+	n=len(pred)
+	rho=1-6.0*d/(n*(n*n-1))
+	return rho
+
+if __name__=='__main__':
+	shp=[100, 100]
+	a=np.random.randint(1, 6, shp)
+	b=np.random.randint(1, 6, shp)
+	print RMSE_mat(a,b)
+	print spearman_rank_correlation(a,b)
+
+FILENAME: collaborative_filtering.py
+
+import numpy as np
+import recsys_utils
+from scipy.spatial.distance import pdist
+from scipy.sparse import csr_matrix
+from sklearn.metrics.pairwise import pairwise_distances
+from collections import Counter
+from time import time
+from copy import deepcopy
+import evaluation
+from tqdm import tqdm
+
+def subtract_mean(mat_):#,type='user'):
+	'''
+	Subtract row means from matrix mat_.
+	Inputs:
+	mat_ (2D numpy array): matrix from which the mean needs to be subtracted.
+	
+	Returns:
+	mat (2D numpy array): Matrix with row means subtracted.
+	'''
+	mat=deepcopy(mat_)
+	counts=Counter(mat.nonzero()[0])
+	means_mat=mat.sum(axis=1)
+	means_mat=np.reshape(means_mat, [means_mat.shape[0], 1])
+	for i in range(means_mat.shape[0]):
+				if i in counts.keys():
+					means_mat[i,0]=means_mat[i, 0]/float(counts[i])
+				else:
+					means_mat[i,0]=0
+	# Subtract means from non zero values in the matrix
+	mask= mat!=0
+	nonzero_vals=np.array(np.nonzero(mat))
+	nonzero_vals= zip(nonzero_vals[0], nonzero_vals[1])
+	for val in nonzero_vals:
+		mat[val[0], val[1]]-=means_mat[val[0]]
+	return mat
+
+def predict(mat, dist_mat, test, user_map, movie_map, n=10, mode='user'):
+	'''
+	Function to predict the ratings by users on movies in the test dataframe.
+	This function implements both user-user and item-ite collaborative filtering.
+
+	Inputs:
+	mat (2D numpy array): input train matrix
+	dist_mat (2D numpy array): matrix where the [i, j]th element is the cosine similarity between the ith and jth item/user.
+	test(pandas dataframe): pandas test dataframe
+	user_map (python dict): user mappings
+	movie_map (python dict): movie mappings
+	n (int): Number of most similar users/items to consider for prediction
+	mode ['user', 'item']
+
+	Returns:
+	pred (1D numpy array): array containing predictions to the test data.
+	'''
+	pred=[]
+	if mode=='user':
+		# iterate over test cases
+		for idx,row in test.iterrows():
+			dist=np.reshape(dist_mat[:, user_map[row['userId']]], [len(dist_mat),1])
+			usr_ratings=mat[:, movie_map[row['movieId']]].todense()
+			temp_rating_dist=zip(dist.tolist(), usr_ratings.tolist())
+			temp_rating_dist.sort(reverse=True)
+			temp_rating_dist=temp_rating_dist[1:]
+			rating=0
+			c=1
+			den=0
+			for i in range(len(temp_rating_dist)):
+				if c>=n:
+					break
+				elif temp_rating_dist[i][1][0]!=0:
+					rating+=temp_rating_dist[i][1][0]*temp_rating_dist[i][0][0]
+					den+=temp_rating_dist[i][0][0]
+				c+=1
+			if den==0:
+				den=1
+			rating=rating/den
+			pred.append(rating)
+
+
+	else:
+		for idx,row in test.iterrows():
+			dist=np.reshape(dist_mat[:, movie_map[row['movieId']]], [len(dist_mat),1])
+			movie_ratings=mat[:, user_map[row['userId']]].todense()
+			temp_rating_dist=zip(dist.tolist(), movie_ratings.tolist())
+			temp_rating_dist.sort(reverse=True)
+			temp_rating_dist=temp_rating_dist[1:]
+			rating=0
+			c=1
+			den=0
+			for i in range(len(temp_rating_dist)):
+				if c>=n:
+					break
+				elif temp_rating_dist[i][1][0]!=0:
+					rating+=temp_rating_dist[i][1][0]*temp_rating_dist[i][0][0]
+					den+=temp_rating_dist[i][0][0]
+				c+=1
+			if den==0:
+				den=1
+			rating=rating/den
+			pred.append(rating)
+	return np.array(pred)
+
+if __name__=='__main__':
+
+	# Read files	
+	train=recsys_utils.read_train(sparse=True)
+	test=recsys_utils.read_test_table().head(10000)
+	truth=test['rating'].head(10000).as_matrix()
+	user_map=recsys_utils.read_user_map()
+	movie_map=recsys_utils.read_movie_map()
+
+	# User-user collaborative filtering
+	# user_means=np.squeeze(np.sum(np.array(train.todense()), axis=1))
+	user_means=np.squeeze(np.sum(np.array(train.todense()), axis=1))
+	user_means=np.divide(user_means, (np.array(train.todense())!=0).sum(1))
+	print 'User-user collaborative filtering....'
+	start_time_user=time()
+	user_dist=1-pairwise_distances(subtract_mean(train.astype('float32')), metric='cosine')
+	print 'Time taken to calculate distances:', time()-start_time_user
+	predictions=predict(train, user_dist, test, user_map, movie_map, 10)
+	print 'User-user-> Total time:', time()- start_time_user
+	print 'User-user-> RMSE:', evaluation.RMSE(predictions, truth)
+	print 'spearman_rank_correlation', evaluation.spearman_rank_correlation(predictions, truth)
+	print 'top k precision:', evaluation.top_k_precision(predictions, test, user_means, user_map, k=5)
+	print 'Total time:', time()-start_time_user
+
+	# Item-item collaborative filtering
+	# item_means=np.squeeze(np.sum(np.array(train.T.todense()), axis=1))
+	item_means=np.squeeze(np.sum(np.array(train.T.todense()), axis=1))
+	item_means=np.divide(item_means, (np.array(train.T.todense())!=0).sum(1))
+	print 'Item-item collaborative filtering....'
+	start_time_item=time()
+	item_dist=1-pairwise_distances(subtract_mean(train.T.astype('float32')), metric='cosine')
+	print 'Time taken to calculate distances:', time()-start_time_item
+	predictions=predict(train.T, item_dist, test, user_map, movie_map, 10, 'item')
+	print 'Item-item-> Total time:', time()- start_time_item
+	print 'Item-item-> RMSE:', evaluation.RMSE(predictions, truth)
+	print 'spearman_rank_correlation', evaluation.spearman_rank_correlation(predictions, truth)
+	print 'top k precision:', evaluation.top_k_precision(predictions, test, item_means, movie_map, k=5, user_=False)
+	print 'Total time:', time()-start_time_item
+
+FILENAME: collaborative_filtering_baseline.py
+
+
+import numpy as np
+import recsys_utils
+from scipy.spatial.distance import pdist
+from scipy.sparse import csr_matrix
+from sklearn.metrics.pairwise import pairwise_distances
+from collections import Counter
+from time import time
+from copy import deepcopy
+import evaluation
+
+
+train=recsys_utils.read_train(sparse = True)
+test=recsys_utils.read_test_table()
+truth=test['rating'].as_matrix()
+user_map=recsys_utils.read_user_map()
+movie_map=recsys_utils.read_movie_map()
+
+
+def subtract_mean(mat_,type='user'):
+    '''
+    Subtract row means from matrix mat_.
+    Inputs:
+    mat_ (2D numpy array): matrix from which the mean needs to be subtracted.
+    
+    Returns:
+    mat (2D numpy array): Matrix with row means subtracted.
+    '''
+    mat=deepcopy(mat_)
+    counts=Counter(mat.nonzero()[0])
+    means_mat=mat.sum(axis=1)
+    means_mat=np.reshape(means_mat, [means_mat.shape[0], 1])
+    for i in range(means_mat.shape[0]):
+                if i in counts.keys():
+                    means_mat[i,0]=means_mat[i, 0]/float(counts[i])
+                else:
+                    means_mat[i,0]=0
+   
+    mask= mat!=0
+    nonzero_vals=np.array(np.nonzero(mat))
+    nonzero_vals= zip(nonzero_vals[0], nonzero_vals[1])
+    for val in nonzero_vals:
+        mat[val[0], val[1]]-=means_mat[val[0]]
+    return mat
+
+    
+
+def predict_baseline(mat, dist_mat, test, user_map, movie_map, n,mode,temp2,usr_mean,movie_mean):
+    '''
+    Function to predict the ratings by users on movies in the test dataframe.
+    This function implements both user-user and item-ite collaborative filtering.
+
+    Inputs:
+    mat (2D numpy array): input train matrix
+    dist_mat (2D numpy array): matrix where the [i, j]th element is the cosine similarity between the ith and jth item/user.
+    test(pandas dataframe): pandas test dataframe
+    user_map (python dict): user mappings
+    movie_map (python dict): movie mappings
+    n (int): Number of most similar users/items to consider for prediction
+    temp2 (2D numpy array): Input Matrix modified with BaseLine approach 
+    mode ['user', 'item']
+    usr_mean(1D numpy array) : Array of Users Mean 
+    movie_mean(1D numpy array)  :Array of Movie Mean.
+    
+    Returns:
+    pred (1D numpy array): array containing predictions to the test data.
+    '''
+
+    
+    pred=[]
+    print "Entered Prediction Function"
+    overall_mean_movie_rating = mat.sum()/mat.count_nonzero()
+    print "Overall Mean Movie Rating ",overall_mean_movie_rating
+    no_of_ratings = 0
+    no_of_zero = 0
+    
+   
+    test = test.head(10000)
+    if mode=='user':
+        for idx,row in test.iterrows():
+            dist=np.reshape(dist_mat[:, user_map[row['userId']]], [len(dist_mat),1])
+            
+            usr_ratings=temp2[:, movie_map[row['movieId']]].todense()
+            
+            temp_rating_dist=zip(dist.tolist(), usr_ratings.tolist())
+            temp_rating_dist.sort(reverse=True)
+            temp_rating_dist=temp_rating_dist[1:]
+            rating = usr_mean[user_map[row['userId']]] + movie_mean[movie_map[row['movieId']]] - overall_mean_movie_rating
+            similar_rating = 0
+            c = 1
+            den = 0
+            for i  in range(len(temp_rating_dist)):
+                if c>=n:
+                    break
+                elif temp_rating_dist[i][1][0]!=0:
+                    similar_rating+=(temp_rating_dist[i][1][0]+overall_mean_movie_rating)*temp_rating_dist[i][0][0]
+                    den+=temp_rating_dist[i][0][0]
+                c+=1
+                
+            if den==0:
+                den=1
+            rating+=similar_rating/den
+            if rating>5:
+                rating=5
+            if rating<0:
+                rating = usr_mean[user_map[row['userId']]] + movie_mean[movie_map[row['movieId']]] - overall_mean_movie_rating
+            pred.append(rating)
+    else:
+        print temp2.shape
+        for idx,row in test.iterrows(): 
+            dist=np.reshape(dist_mat[:, movie_map[row['movieId']]], [len(dist_mat),1])
+            movie_ratings=temp2[:, user_map[row['userId']]].todense()
+            temp_rating_dist=zip(dist.tolist(), movie_ratings.tolist())
+            temp_rating_dist.sort(reverse=True)
+            temp_rating_dist=temp_rating_dist[1:]
+            no_of_ratings+=1
+            rating=0
+            c=1
+            den=0
+            for i in range(len(temp_rating_dist)):
+                if c>=n:
+                    break
+                elif temp_rating_dist[i][1][0]!=0:
+                    rating+=temp_rating_dist[i][1][0]*temp_rating_dist[i][0][0]
+                    den+=temp_rating_dist[i][0][0]
+                c+=1
+            if den==0:
+                den=1
+            rating=rating/den
+            
+            if rating<=0:
+                rating = usr_mean[user_map[row['userId']]] + movie_mean[movie_map[row['movieId']]] - overall_mean_movie_rating
+                no_of_zero+=1
+            pred.append(rating)
+            #print "Predicted::",rating,"  Actual:: ",row['rating']
+    return np.array(pred)
+                
+
+
+# User-user collaborative filtering
+print ('User-user collaborative filtering....')
+print type(train)
+
+counts=Counter(train.nonzero()[0])
+
+count_movie =  Counter(train.nonzero()[1])
+
+means_mat=np.squeeze(np.sum(np.array(train.todense()), axis=1))
+movie_mat=np.squeeze(np.sum(np.array(train.todense()), axis=0))
+
+print "means_mat_Shape:  ",means_mat.shape
+print "Movie _mat_Shape:  ",movie_mat.shape
+
+for i in range(means_mat.shape[0]):
+		if i in counts.keys():
+				means_mat[i]=means_mat[i]/counts[i]
+		else:
+				means_mat[i]=0
+for i in range(movie_mat.shape[0]):
+		if i in count_movie.keys():
+				movie_mat[i]=movie_mat[i]/count_movie[i]
+		else:
+				movie_mat[i]=0
+
+
+
+temp=deepcopy(train)
+temp2=deepcopy(train)
+
+mask= temp!=0
+nonzero_vals=np.array(np.nonzero(temp))
+nonzero_vals= zip(nonzero_vals[0], nonzero_vals[1])
+
+temp_start_time=time()
+print len(nonzero_vals)
+for val in nonzero_vals:
+    temp2[val[0],val[1]] = temp2[val[0],val[1]] - means_mat[val[0]] - movie_mat[val[1]]
+
+print 'means'
+means_mat=np.squeeze(means_mat)
+movie_mat=np.squeeze(movie_mat)
+print means_mat.shape
+print movie_mat.shape
+
+print ('Time taken:', time()-temp_start_time)
+
+user_dist = 1-pairwise_distances(subtract_mean(temp), metric='cosine')
+start_time_item = time()
+predictions_usr=predict_baseline(train, user_dist, test, user_map, movie_map, 10,'user',temp2,means_mat,movie_mat)
+print 'User-User-> Total time:', time()- start_time_item
+predictions_usr=np.squeeze(predictions_usr)
+print 'User-User-> Total time:', time()- start_time_item
+print 'User-User-> RMSE:', evaluation.RMSE(predictions_usr, truth[0:10000])
+print 'spearman_rank_correlation', evaluation.spearman_rank_correlation(predictions_usr, truth[0:10000])
+print 'Precision on top K' , evaluation.top_k_precision(predictions_usr, test.head(10000), means_mat, user_map)
+
+
+print 'Item-item collaborative filtering....'
+start_time_item=time()
+item_dist=1-pairwise_distances(subtract_mean(train.T), metric='cosine')
+print 'Time taken to calculate distances:', time()-start_time_item
+temp2 = temp2.T
+predictions_mov=predict_baseline(train.T, item_dist, test, user_map, movie_map, 10,'item',temp2,means_mat,movie_mat)
+predictions=np.squeeze(predictions_mov)
+print 'Item-item-> Total time:', time()- start_time_item
+print 'Item-item-> RMSE:', evaluation.RMSE(predictions, truth[0:10000])
+print 'spearman_rank_correlation', evaluation.spearman_rank_correlation(predictions, truth[0:10000])
+print 'Precision on top K' , evaluation.top_k_precision(predictions, test.head(10000), movie_mat, movie_map, 5, False)
+
+FILENAME: SVD.py
+
+import pandas as pd
+import numpy as np
+from time import time
+import recsys_utils
+import os
+from copy import deepcopy
+import evaluation
+
+
+def energy_calc(vec, percent_energy_retain):
+	'''
+	Function to calculate energy of eigenvalues and return the number of 
+	eigenvalues to use to retain 'percent_energy_retain'% of total energy.
+	
+	Inputs-
+	vec(1D numpy array): Vector of eigenvalues
+	percent_energy_retain(int): percentage of energy to retain
+
+	Returns-
+	index(int): number of largest eigenvalues to use.
+	'''
+	if vec.ndim==2:
+		vec=np.squeeze(vec)
+	elif percent_energy_retain==0:
+		return -1
+	print vec[0:10]
+	total_energy=np.sum(vec)
+	required_energy=percent_energy_retain*total_energy/(100.0)
+	index=np.argmin(vec.cumsum() <= required_energy)+1
+	return index
+
+def SVD(mat, percent_energy_retain=90, save_factorized=False):
+	'''
+	Function to perform SVD decomposition of a matrix. This function
+	also provides functionality to reduce number of eigenvalues to reduce the
+	dimensionality of the factor matrices.
+	
+	Inputs-
+	mat(2D numpy array): The matrix to be decomposed
+	percent_energy_retain(int): percentage of energy to retain
+	save_factorized(bool): If True, the factor matrices will be saved to disk
+
+	Returns-
+	U(2D numpy array): U matrix
+	V_t(2D numpy array): Transpose of V matrix
+	Sigma(2D numpy array): Sigma Matrix
+	'''
+
+	# Calculate U
+	vals, vecs=np.linalg.eig(np.dot(mat, mat.T))
+	vals=np.absolute(np.real(vals))
+	if percent_energy_retain==100:
+		no_eigenvalues=np.linalg.matrix_rank(np.dot(mat, mat.T))
+	else:
+		no_eigenvalues=energy_calc(np.sort(vals)[::-1], percent_energy_retain)
+	print 'No of eigenvalues retained:', no_eigenvalues
+	indices=np.argsort(vals)[::-1][0:no_eigenvalues]
+	U=np.real(vecs[:, indices])
+
+	diag_vals=deepcopy(np.reshape(np.sqrt(np.sort(vals)[::-1])[0:no_eigenvalues], [no_eigenvalues]))
+
+	# Calculate sigma
+	sigma=np.zeros([no_eigenvalues, no_eigenvalues])
+	np.fill_diagonal(sigma, diag_vals)
+
+	#Calculate V
+	V=np.zeros([mat.shape[1], no_eigenvalues])
+	for i in range(no_eigenvalues):
+		scaling_factor=(1/diag_vals[i])
+		V[:, i]= scaling_factor*np.reshape(np.dot(mat.T, np.reshape(U[:, i], [U.shape[0], 1])), [mat.shape[1]])
+	V_t=V.T
+
+	if save_factorized:
+		np.save('temp_data/U', U)
+		np.save('temp_data/V_t', V_t)
+		np.save('temp_data/sigma', sigma)
+		print 'Matrices saved!'
+
+	return U, V_t, sigma
+
+if __name__=='__main__':
+	# Read data
+	train=np.array(recsys_utils.read_train())
+	test=recsys_utils.read_test_table()
+	truth=test['rating'].as_matrix()
+	user_map=recsys_utils.read_user_map()
+	movie_map=recsys_utils.read_movie_map()
+
+	start_time=time()
+
+	# Subtract means from train
+	user_means=np.squeeze(np.sum(train, axis=1))
+	user_means=np.divide(user_means, (train!=0).sum(1))
+	for i in range(train.shape[0]):
+		train[i, :][train[i, :]!=0]-=user_means[i]
+
+	# SVD Decomposition and Reconstruction
+	U, V_t, sigma=SVD(train, percent_energy_retain=100, save_factorized=True)
+	print 'Factorization Time:', time()-start_time
+	reconstructed=np.dot(np.dot(U, sigma), V_t)
+	print 'RMSE(reconstruction):', evaluation.RMSE_mat(train, reconstructed)
+
+	# Get Predictions
+	pred_mat=train+np.reshape(user_means, [len(user_means), 1])
+	rows=[user_map[x] for x in test['userId']]
+	cols=[movie_map[x] for x in test['movieId']]
+	predictions=pred_mat[rows, cols]
+	total_time_svd=time()-start_time
+	print 'RMSE:', evaluation.RMSE(np.array(predictions), truth)
+	print 'spearman_rank_correlation', evaluation.spearman_rank_correlation(np.array(predictions), truth)
+	print 'Top k Precision(k=5):', evaluation.top_k_precision(predictions, 
+		test, user_means, user_map, 5)
+	print 'Total SVD time:', total_time_svd
+
+FILENAME: CUR.py
+
+'''Importing Libraries'''
+import numpy as np
+import recsys_utils
+from scipy.spatial.distance import pdist
+from scipy.sparse import csr_matrix
+from sklearn.metrics.pairwise import pairwise_distances
+from collections import Counter
+from time import time
+from copy import deepcopy
+from math import sqrt
+from scipy.sparse.linalg import norm
+import random
+import evaluation 
+# import SVD_module
+from SVD import SVD
+
+def Usr_Mean(train2):
+    '''
+    Calculate Mean of Every User 
+    
+    Inputs:
+    train2 (2D numpy array): matrix from which the mean needs to be calculated.
+
+    Returns:
+    means_mat (1D numpy array): Matrix with row means 
+    '''
+    means_mat=train2.sum(axis=1)
+    counts=Counter(train2.nonzero()[0])
+    for i in range(means_mat.shape[0]):
+        if i in counts.keys():
+            means_mat[i,0]=means_mat[i, 0]/counts[i]
+        else:
+            means_mat[i,0]=0
+    return means_mat
+
+def Subtract_Mean_value(train2):
+    '''
+    Subtract row means from matrix mat_.
+    Inputs:
+    train2 (2D numpy array): matrix from which the mean needs to be subtracted.
+    
+    Returns:
+    mat (1D numpy array): Array with row means.
+    '''
+    train=deepcopy(train2)
+    nonzero_vals=np.array(np.nonzero(train))
+    nonzero_vals= zip(nonzero_vals[0], nonzero_vals[1])
+
+    for val in nonzero_vals:
+        train[val[0], val[1]] -= means_mat[val[0]]
+    return train
+def calc_frob(train):
+    '''
+    Calculating Frobenius Sum of entire matrix and also row wise and column wise.
+    Inputs:
+    train (2D numpy array): matrix from which the Frobenius Sum needs to be calculated.
+    
+    Returns:
+    forbenius_norm_matrix (double): Frobenius Sum of entire matrix
+    forbenius_norm_matrix_col (1D numpy array): Array with Frobenius Sum of matrix Column Wise.
+    forbenius_norm_matrix_row (1D numpy array): Array with Frobenius Sum of matrix Row Wise.
+    '''
+    forbenius_norm_matrix =  np.linalg.norm(train)
+    forbenius_norm_matrix_col =  np.linalg.norm(train,axis = 0)
+    forbenius_norm_matrix_row =  np.linalg.norm(train,axis = 1)  
+
+    sum = 0
+    
+    
+    ''' Computing Probablities '''
+    for i in range(len(forbenius_norm_matrix_col)):
+        forbenius_norm_matrix_col[i] = (forbenius_norm_matrix_col[i]/forbenius_norm_matrix)**2
+        sum+=forbenius_norm_matrix_col[i]
+     
+
+    
+    ''' Computing Probablities '''    
+    for i in range(len(forbenius_norm_matrix_row)):
+        forbenius_norm_matrix_row[i] = (forbenius_norm_matrix_row[i]/forbenius_norm_matrix)**2
+        sum+=forbenius_norm_matrix_row[i]
+        
+
+    
+    return forbenius_norm_matrix,forbenius_norm_matrix_col,forbenius_norm_matrix_row
+
+def select(forbenius_norm_matrix_col,no_of_param,replace,forbenius_norm_matrix_row):
+    '''
+    Selcting Columns and rows based on Their Froebnius Norm and also randomly  
+    
+    Inputs:
+    forbenius_norm_matrix_col (1D numpy array): matrix with Frobenius Sum Columns Wise.
+    no_of_param (Integer) : No. of columns and rows to be selected 
+    replace (bool) : Replace the column or row once it is selected 
+    forbenius_norm_matrix_row (1D numpy array): matrix with Frobenius Sum Row Wise.
+    
+    Returns:
+    selected_Columns (1D numpy array): List of selected Columns 
+    selected_Rows (1 D Numpy array)  : List of selected rows
+    
+    '''
+
+    if replace==False:
+        selected_Columns =  np.random.choice(len(forbenius_norm_matrix_col),no_of_param,replace = False, p = forbenius_norm_matrix_col)
+        selected_Rows = np.random.choice(len(forbenius_norm_matrix_row),no_of_param,replace = False , p = forbenius_norm_matrix_row)
+        selected_Columns.sort()
+        selected_Rows.sort()
+    else:
+        selected_Columns =  np.random.choice(len(forbenius_norm_matrix_col),no_of_param,replace = True, p = forbenius_norm_matrix_col)
+        selected_Rows = np.random.choice(len(forbenius_norm_matrix_row),no_of_param,replace = True , p = forbenius_norm_matrix_row)
+        selected_Columns.sort()
+        selected_Rows.sort()
+
+    return selected_Columns,selected_Rows
+
+
+def Compute_U(train,C_frob,R_frob):
+    '''
+    Computing U matrix in CUR decomposition 
+
+    Inputs:
+    train (2D numpy array)  : matrix from which the W matrix need to be constructed.
+    C_frob (2D numpy array) : List of selected Columns along with fronenius probability
+    R_frob (2D numpy array) : List of selected Rows along with fronenius probability 
+    
+    Returns:
+    U(2D Numpy Array)  : U Matrix Of CUR Decomposition 
+    
+    '''
+    W_matrix = [[train[int(i[0]),int(j[0])] for j in C_frob ]for i in R_frob]
+
+
+
+
+    X,Y,Sig1 = SVD(np.array(W_matrix))
+
+    Sig = np.diag(Sig1)
+
+    Sigma_sum = np.sum(Sig)
+    print type(Sigma_sum)
+    print Sigma_sum
+    print Sigma_sum
+    Sigma_sum*=0.9999
+    x = 0
+    t = 0
+    for i in range(len(Sig)):
+        t = i
+        if x > Sigma_sum:
+            break
+        else:
+            x+=Sig[i]
+
+    print "Shape of X ::  Shape of Y" ,X.shape, " :: ", Y.shape
+
+    for i in range(t):
+        X = np.delete(X,len(Sig)-1,1)
+        Y = np.delete(Y,len(Sig)-1,0)
+        Sig = np.delete(Sig,len(Sig)-1)
+        
+    print "New Sigma Shape :: " , Sig.shape  
+    print "New Sigma Bro" , len(Sig)   
+    #time.sleep(10) 
+    q = len(Sig)       
+
+    print "Shape of X ::  Shape of Y" ,X.shape, " :: ", Y.shape
+
+
+
+    Psuedo_inv = Y.transpose()
+
+    ''' Translating Sigma(1-d) to Sigma(Diagonal Matrix)  '''
+
+    print "New sigma :: " , Sig.shape
+    Sig_inv = np.diagflat(Sig)
+
+
+    print "E:: ",Sig_inv[q-1,q-1]
+    Sig_inv = np.linalg.inv(Sig_inv)
+
+    print "Sigma INverse :: " , Sig_inv.shape
+
+
+    print "N:: ",Sig_inv[q-1,q-1]
+    #time.sleep(10)
+
+    Sig_inv = np.matmul(Sig_inv,Sig_inv.T)
+
+    print "Sigma Shape :: " , Sig_inv.shape
+    Psuedo_inv = np.matmul(Psuedo_inv , Sig_inv)
+    Psuedo_inv = np.matmul(Psuedo_inv,X.transpose())
+    U = Psuedo_inv
+    return U
+
+def Compute_Cur(Matrix_C,Matrix_R,U_mat):
+    '''
+    Reconstruct Original Matrix by Multiplying C*U*R
+
+    Inputs:
+    Matrix_C (2D numpy array)  : Matrix C of CUR Decomposition
+    Matrix_R (2D numpy array) : Matrix R of CUR Decomposition
+    U_mat (2D numpy array) : Matrix U of CUR Decomposition
+    
+    Returns:
+    Cur_mat (2D numpy array) : Matrix Obtained by Multiplication of C*U*R components of CUR decomposition
+    '''
+
+    mat_c = np.array(Matrix_C)
+    mat_r = np.array(Matrix_R)
+    print mat_c.shape, " ",U_mat.shape," ",mat_r.shape
+    Cur_mat = np.matmul(Matrix_C,U_mat)
+    Cur_mat = np.matmul(Cur_mat,Matrix_R)
+
+
+    print "Final Matrix Shape"
+    print Cur_mat.shape
+
+    a = Cur_mat[0,1]
+
+    Cur_mat = np.add(Cur_mat,means_mat) 
+    return Cur_mat
+
+train2=recsys_utils.read_train()
+test=recsys_utils.read_test_table()
+truth=test['rating'].as_matrix()
+user_map=recsys_utils.read_user_map()
+movie_map=recsys_utils.read_movie_map()
+
+print "Train Data Shape"
+print train2.shape
+
+
+means_mat = Usr_Mean(train2)
+
+
+print "Done till here" 
+
+train = Subtract_Mean_value(train2)         
+
+    
+
+'''Calcuating Frobnieus Norm rowwise and column wise'''
+start_time_user=time()
+forbenius_norm_matrix,forbenius_norm_matrix_col,forbenius_norm_matrix_row = calc_frob(train)
+
+
+"""This is No of rows to be selected which is equal to 4 * (no_of_dimension in svd) """
+no_of_param = 900
+print "No of Parameters Selected : ", no_of_param
+
+
+def CUR_decompoaition_with_replacement(selected_Columns,selected_Rows):
+    print "List of Selected Columns"
+    print selected_Columns
+    
+    sel_frob_c = [forbenius_norm_matrix_col[i] for i in selected_Columns]
+    
+    sel_frob_r = [forbenius_norm_matrix_row[i] for i in selected_Rows]
+    
+    
+    R_frob = np.column_stack((selected_Rows,sel_frob_r))
+    C_frob = np.column_stack((selected_Columns,sel_frob_c))
+    
+    
+    
+    """Trying to convert the following list foramtion in certain function """
+    
+    print "No of Columns Considered : " ,len(C_frob)
+     
+    print "Matrix_C of CUR ::"
+    try_C = train[:,selected_Columns]
+    print try_C.shape
+    Matrix_C = [[((train[i,y[0]])/(sqrt(no_of_param*y[1])))for y in C_frob ]for i in range(len(forbenius_norm_matrix_row))]
+    mat_c = np.array(Matrix_C)
+    
+    
+    print len(Matrix_C)," , ",len(Matrix_C[0])
+    
+    R_frob = R_frob[:no_of_param]
+    
+    print "No of Rows Considered : " ,len(R_frob)
+    
+    print "Matrix_R of CUR"
+    try_R = train[selected_Rows,:]
+    print "Try_r"
+    print try_R.shape
+    Matrix_R = [[(train[int(y[0]),i])/(sqrt(no_of_param*y[1])) for i in range(len(forbenius_norm_matrix_col)) ]for y in R_frob]
+    print len(Matrix_R)," , " , len(Matrix_R[0])
+    
+    print"Matrix_W of CUR"
+    W_matrix = [[train[int(i[0]),int(j[0])] for j in C_frob ]for i in R_frob]
+    
+    print "Calculating the SVD of W matrix"
+    
+    X,Y,Sig1= SVD(W_matrix)
+    
+    Sig = np.diag(Sig1)
+    print "Shape of W matrix svd matrix"
+    print X.shape , " ",Sig.shape , " ",Y.shape
+    
+    Psuedo_inv = Y.transpose()
+    
+    ''' Translating Sigma(1-d) to Sigma(Diagonal Matrix)  '''
+    Sig_inv = np.diagflat(Sig)
+    
+    Sig_inv = np.linalg.inv(Sig_inv)
+    
+    Sig_inv = np.matmul(Sig_inv,Sig_inv)
+    
+    Psuedo_inv = np.matmul(Psuedo_inv , Sig_inv)
+    Psuedo_inv = np.matmul(Psuedo_inv,X.transpose())
+    
+     
+    mat_c = np.array(Matrix_C)
+    mat_r = np.array(Matrix_R)
+    print mat_c.shape, " ",Psuedo_inv.shape," ",mat_r.shape
+    Cur_mat = np.matmul(Matrix_C,Psuedo_inv)
+    Cur_mat = np.matmul(Cur_mat,Matrix_R)
+    
+    
+    print "Final Matrix Shape with replacement as true"
+    
+    print "Final Matrix Shape"
+    print Cur_mat.shape
+    
+    print Cur_mat[0,0]
+    
+    Cur_mat = np.add(Cur_mat,means_mat)
+    
+
+    
+    evaluation.rmse(Cur_mat)    
+
+
+""" Selecting random rows and columns based on their probablities"""
+
+selected_Columns,selected_Rows = select(forbenius_norm_matrix_col,no_of_param,False,forbenius_norm_matrix_row)
+selected_Columns1,selected_Rows1 = select(forbenius_norm_matrix_col,no_of_param,True,forbenius_norm_matrix_row)
+
+def formMat_C(C_frob,train,no_of_param,forbenius_norm_matrix_row):
+    Matrix_C = [[((train[i,int(y[0])])/(sqrt(no_of_param*y[1])))for y in C_frob ]for i in range(len(forbenius_norm_matrix_row))]
+    return Matrix_C
+
+print "We are working with cloumns adn rows where repitition are not allowed"
+print "List of Selected Columns"
+print selected_Columns
+
+sel_frob_c = [forbenius_norm_matrix_col[i] for i in selected_Columns]
+sel_frob_r = [forbenius_norm_matrix_row[i] for i in selected_Rows]
+
+
+R_frob = np.column_stack((selected_Rows,sel_frob_r))
+C_frob = np.column_stack((selected_Columns,sel_frob_c))
+
+
+
+"""Trying to convert the following list foramtion in certain function """
+
+print "No of Columns Considered : " ,len(C_frob)
+
+Matrix_C = formMat_C(C_frob,train,no_of_param,forbenius_norm_matrix_row)    
+
+
+print len(Matrix_C)," , ",len(Matrix_C[0])
+
+
+
+
+Matrix_R = [[(train[int(y[0]),i])/(sqrt(no_of_param*y[1])) for i in range(len(forbenius_norm_matrix_col)) ]for y in R_frob]
+
+
+U_mat = Compute_U(train,C_frob,R_frob)
+ 
+Cur_mat = Compute_Cur(Matrix_C,Matrix_R,U_mat)
+
+
+end_Time = time()
+
+
+print "Time taken to execute CUR : " , (end_Time-start_time_user)
+
+pred_Ratings = []
+for idx,row in test.iterrows():
+    pred_Ratings.append(Cur_mat[user_map[row['userId']] ,movie_map[row['movieId']]])
+    
+predictions = np.array(pred_Ratings)
+print len(predictions)  
+print "RMSE ERROR " , evaluation.RMSE(predictions,truth)
+print "Spearman Rank Correlation  ", evaluation.spearman_rank_correlation(predictions,truth)
+print "Top K rank Precision :: "   , evaluation.top_k_precision(predictions,test,np.squeeze(np.array(means_mat)),user_map)

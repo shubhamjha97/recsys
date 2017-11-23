@@ -38,7 +38,7 @@ python collaborative_filtering.py
 ```
 ##### Collaborative Filtering with Baseline Approach
 ```
-python collaborative_filtering_withbaseline.py 
+python collaborative_filtering_baseline.py 
 ```
 ##### SVD
 ```python
@@ -112,14 +112,13 @@ OS: Ubuntu 16.04 LTS
 
 ## Results
 
-| Recommender System Technique               | Root Mean Square Error (RMSE)   | Precision on top K           | Spearman Rank Correlation            | Time taken for prediction (secs) |
-|--------------------------------------------|---------------------------------|------------------------------|--------------------------------------|----------------------------------|
-| Collaborative                              | 2.033519 (item) 2.1502(user)    | 0.6016 (item) 0.584474(user) | 0.99999975(item) 0.99999972 (user)   | 211.979 (item)  272.817 (user)   |
-| Collaborative along with Baseline approach | 1.005434 (item) 1.005434 (user) | (item) (user)                |  0.99999743 (item) 0.99999994 (user) | 323.75 (item) 340.24(user)       |
-| SVD                                        | 1.03512426007                   | 0.654428981666               | 0.999999999839                       | 565.33                           |
-| SVD with 90% retained energy               | 1.03                            | 0.6528                       | 0.999999999839                       | 361.49                           |
-| CUR                                        |                                 |                              |                                      |                                  |
-| CUR with 90% retained energy               |                                 |                              |                                      |                                  |
+| Recommender System Technique               | Root Mean Square Error (RMSE)   | Precision on top K                  | Spearman Rank Correlation            | Time taken for prediction (secs) |
+|--------------------------------------------|---------------------------------|-------------------------------------|--------------------------------------|----------------------------------|
+| Collaborative                              | 2.033519 (item) 2.1502(user)    | 0.6016 (item) 0.584474(user)        | 0.99999975(item) 0.99999972 (user)   | 211.979 (item)  272.817 (user)   |
+| Collaborative along with Baseline approach | 0.939036 (item) 1.005434 (user) | 0.62865586 (item) 0.64406025 (user) | 0.999999947 (item) 0.99999939 (user) | 313.3369 (item) 273.2009(user)   |
+| SVD                                        | 1.03512426007                   | 0.654428981666                      | 0.999999999839                       | 565.33                           |
+| SVD with 90% retained energy               | 1.03                            | 0.6528                              | 0.999999999839                       | 361.49                           |
+| CUR                                        | 1.19389972                      | 0.900607466                         | 0.99999999786                        | 53.4029                          |
 
 ## Members
 [Shubham Jha](http://github.com/shubhamjha97)

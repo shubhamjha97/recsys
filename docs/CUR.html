@@ -1,0 +1,150 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module CUR</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>CUR</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/shubham/Desktop/recsys_final/CUR.py">/home/shubham/Desktop/recsys_final/CUR.py</a></font></td></tr></table>
+    <p><tt>Created&nbsp;on&nbsp;Mon&nbsp;Nov&nbsp;06&nbsp;20:59:26&nbsp;2017<br>
+&nbsp;<br>
+@author:&nbsp;Saurabh</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="evaluation.html">evaluation</a><br>
+</td><td width="25%" valign=top><a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top><a href="random.html">random</a><br>
+</td><td width="25%" valign=top><a href="recsys_utils.html">recsys_utils</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-CUR_decompoaition_with_replacement"><strong>CUR_decompoaition_with_replacement</strong></a>(selected_Columns, selected_Rows)</dt></dl>
+ <dl><dt><a name="-Compute_Cur"><strong>Compute_Cur</strong></a>(Matrix_C, Matrix_R, U_mat)</dt><dd><tt>Reconstruct&nbsp;Original&nbsp;Matrix&nbsp;by&nbsp;Multiplying&nbsp;C*U*R<br>
+&nbsp;<br>
+Inputs:<br>
+Matrix_C&nbsp;(2D&nbsp;numpy&nbsp;array)&nbsp;&nbsp;:&nbsp;Matrix&nbsp;C&nbsp;of&nbsp;CUR&nbsp;Decomposition<br>
+Matrix_R&nbsp;(2D&nbsp;numpy&nbsp;array)&nbsp;:&nbsp;Matrix&nbsp;R&nbsp;of&nbsp;CUR&nbsp;Decomposition<br>
+U_mat&nbsp;(2D&nbsp;numpy&nbsp;array)&nbsp;:&nbsp;Matrix&nbsp;U&nbsp;of&nbsp;CUR&nbsp;Decomposition<br>
+&nbsp;<br>
+Returns:<br>
+Cur_mat&nbsp;(2D&nbsp;numpy&nbsp;array)&nbsp;:&nbsp;Matrix&nbsp;Obtained&nbsp;by&nbsp;Multiplication&nbsp;of&nbsp;C*U*R&nbsp;components&nbsp;of&nbsp;CUR&nbsp;decomposition</tt></dd></dl>
+ <dl><dt><a name="-Compute_U"><strong>Compute_U</strong></a>(train, C_frob, R_frob)</dt><dd><tt>Computing&nbsp;U&nbsp;matrix&nbsp;in&nbsp;CUR&nbsp;decomposition&nbsp;<br>
+&nbsp;<br>
+Inputs:<br>
+train&nbsp;(2D&nbsp;numpy&nbsp;array)&nbsp;&nbsp;:&nbsp;matrix&nbsp;from&nbsp;which&nbsp;the&nbsp;W&nbsp;matrix&nbsp;need&nbsp;to&nbsp;be&nbsp;constructed.<br>
+C_frob&nbsp;(2D&nbsp;numpy&nbsp;array)&nbsp;:&nbsp;List&nbsp;of&nbsp;selected&nbsp;Columns&nbsp;along&nbsp;with&nbsp;fronenius&nbsp;probability<br>
+R_frob&nbsp;(2D&nbsp;numpy&nbsp;array)&nbsp;:&nbsp;List&nbsp;of&nbsp;selected&nbsp;Rows&nbsp;along&nbsp;with&nbsp;fronenius&nbsp;probability&nbsp;<br>
+&nbsp;<br>
+Returns:<br>
+U(2D&nbsp;Numpy&nbsp;Array)&nbsp;&nbsp;:&nbsp;U&nbsp;Matrix&nbsp;Of&nbsp;CUR&nbsp;Decomposition</tt></dd></dl>
+ <dl><dt><a name="-Subtract_Mean_value"><strong>Subtract_Mean_value</strong></a>(train2)</dt><dd><tt>Subtract&nbsp;row&nbsp;means&nbsp;from&nbsp;matrix&nbsp;mat_.<br>
+Inputs:<br>
+train2&nbsp;(2D&nbsp;numpy&nbsp;array):&nbsp;matrix&nbsp;from&nbsp;which&nbsp;the&nbsp;mean&nbsp;needs&nbsp;to&nbsp;be&nbsp;subtracted.<br>
+&nbsp;<br>
+Returns:<br>
+mat&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;Array&nbsp;with&nbsp;row&nbsp;means.</tt></dd></dl>
+ <dl><dt><a name="-Usr_Mean"><strong>Usr_Mean</strong></a>(train2)</dt><dd><tt>Calculate&nbsp;Mean&nbsp;of&nbsp;Every&nbsp;User&nbsp;<br>
+&nbsp;<br>
+Inputs:<br>
+train2&nbsp;(2D&nbsp;numpy&nbsp;array):&nbsp;matrix&nbsp;from&nbsp;which&nbsp;the&nbsp;mean&nbsp;needs&nbsp;to&nbsp;be&nbsp;calculated.<br>
+&nbsp;<br>
+Returns:<br>
+means_mat&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;Matrix&nbsp;with&nbsp;row&nbsp;means</tt></dd></dl>
+ <dl><dt><a name="-calc_frob"><strong>calc_frob</strong></a>(train)</dt><dd><tt>Calculating&nbsp;Frobenius&nbsp;Sum&nbsp;of&nbsp;entire&nbsp;matrix&nbsp;and&nbsp;also&nbsp;row&nbsp;wise&nbsp;and&nbsp;column&nbsp;wise.<br>
+Inputs:<br>
+train&nbsp;(2D&nbsp;numpy&nbsp;array):&nbsp;matrix&nbsp;from&nbsp;which&nbsp;the&nbsp;Frobenius&nbsp;Sum&nbsp;needs&nbsp;to&nbsp;be&nbsp;calculated.<br>
+&nbsp;<br>
+Returns:<br>
+forbenius_norm_matrix&nbsp;(double):&nbsp;Frobenius&nbsp;Sum&nbsp;of&nbsp;entire&nbsp;matrix<br>
+forbenius_norm_matrix_col&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;Array&nbsp;with&nbsp;Frobenius&nbsp;Sum&nbsp;of&nbsp;matrix&nbsp;Column&nbsp;Wise.<br>
+forbenius_norm_matrix_row&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;Array&nbsp;with&nbsp;Frobenius&nbsp;Sum&nbsp;of&nbsp;matrix&nbsp;Row&nbsp;Wise.</tt></dd></dl>
+ <dl><dt><a name="-formMat_C"><strong>formMat_C</strong></a>(C_frob, train, no_of_param, forbenius_norm_matrix_row)</dt></dl>
+ <dl><dt><a name="-select"><strong>select</strong></a>(forbenius_norm_matrix_col, no_of_param, replace, forbenius_norm_matrix_row)</dt><dd><tt>Selcting&nbsp;Columns&nbsp;and&nbsp;rows&nbsp;based&nbsp;on&nbsp;Their&nbsp;Froebnius&nbsp;Norm&nbsp;and&nbsp;also&nbsp;randomly&nbsp;&nbsp;<br>
+&nbsp;<br>
+Inputs:<br>
+forbenius_norm_matrix_col&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;matrix&nbsp;with&nbsp;Frobenius&nbsp;Sum&nbsp;Columns&nbsp;Wise.<br>
+no_of_param&nbsp;(Integer)&nbsp;:&nbsp;No.&nbsp;of&nbsp;columns&nbsp;and&nbsp;rows&nbsp;to&nbsp;be&nbsp;selected&nbsp;<br>
+replace&nbsp;(bool)&nbsp;:&nbsp;Replace&nbsp;the&nbsp;column&nbsp;or&nbsp;row&nbsp;once&nbsp;it&nbsp;is&nbsp;selected&nbsp;<br>
+forbenius_norm_matrix_row&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;matrix&nbsp;with&nbsp;Frobenius&nbsp;Sum&nbsp;Row&nbsp;Wise.<br>
+&nbsp;<br>
+Returns:<br>
+selected_Columns&nbsp;(1D&nbsp;numpy&nbsp;array):&nbsp;List&nbsp;of&nbsp;selected&nbsp;Columns&nbsp;<br>
+selected_Rows&nbsp;(1&nbsp;D&nbsp;Numpy&nbsp;array)&nbsp;&nbsp;:&nbsp;List&nbsp;of&nbsp;selected&nbsp;rows</tt></dd></dl>
+ <dl><dt><a name="-sqrt"><strong>sqrt</strong></a>(...)</dt><dd><tt><a href="#-sqrt">sqrt</a>(x)<br>
+&nbsp;<br>
+Return&nbsp;the&nbsp;square&nbsp;root&nbsp;of&nbsp;x.</tt></dd></dl>
+ <dl><dt><a name="-time"><strong>time</strong></a>(...)</dt><dd><tt><a href="#-time">time</a>()&nbsp;-&gt;&nbsp;floating&nbsp;point&nbsp;number<br>
+&nbsp;<br>
+Return&nbsp;the&nbsp;current&nbsp;time&nbsp;in&nbsp;seconds&nbsp;since&nbsp;the&nbsp;Epoch.<br>
+Fractions&nbsp;of&nbsp;a&nbsp;second&nbsp;may&nbsp;be&nbsp;present&nbsp;if&nbsp;the&nbsp;system&nbsp;clock&nbsp;provides&nbsp;them.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>C_frob</strong> = array([[  0.00000000e+00,   1.29066954e-03],
+   ...5],
+       [  3.59500000e+03,   8.23634099e-06]])<br>
+<strong>Cur_mat</strong> = matrix([[ 3.60337632,  3.6018934 ,  3.60192035, ... 4.5625    ,
+          4.5625    ,  4.5625    ]])<br>
+<strong>Matrix_C</strong> = [[0.3696557726406427, 0.0, -1.6533497868733735, 0.0, 0.90474199810149236, 0.0, 0.0, 0.0, 0.0, 0.0, 0.27255633018932829, 0.0, 0.35857494771324872, 0.0, 0.0, 0.0, 0.0, 0.70297627381561267, 0.0, 0.0, ...], [0.0, 0.20885859284583116, 0.16704132915729483, -1.9224285328115056, 0.10468944095163825, -0.80918711911207541, 0.0, 0.0, 1.6595001932723046, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.76194777388599577, 0.0, 0.0, 0.0, ...], [-0.11597949866600163, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.17023021876471922, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [0.65027821474271019, 0.0, -0.30881230339079346, 0.73297360907033138, 0.0, 0.0, 1.0456013636898931, 0.0, 0.0, 0.0, 1.1635825757800646, 0.0, 0.0, 0.0, 0.0, -1.5617733151771982, 0.0, 0.0, 0.0, 0.0, ...], [0.0, 0.0, 0.0, 0.75137171528900415, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.65309809190228219, 0.0, -0.77313684466898236, 0.0, ...], [0.0, 0.0, 0.0, 0.0, 0.38104387440360693, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.1917391528861279, 0.0, 0.0, 0.0, ...], [0.0, 0.0, 0.0, 0.0, 0.0, 0.11357657043181076, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [0.39579017726579585, 0.0, -1.6242725048476807, 0.446122518159215, 0.92296553843740792, 0.41181434803422295, 0.0, 1.5538353240673362, 0.0, 0.0, 0.97594226091009539, 0.0, -0.51609717299539037, 0.48985804593472471, 0.0, 0.0, -0.52126880402633469, 0.75267620478257669, 0.0, 0.0, ...], [0.99138639955595897, 0.0, 0.0, 0.0, 0.69129449474421467, 0.0, 1.5940791922876645, 0.0, 0.0, 0.0, 0.73097367567762561, 0.0, 0.0, 0.0, 0.0, 0.0, -0.84677879224057473, 0.0, 0.0, 0.0, ...], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.1763447423968598, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [-0.15841102256819747, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.18596235765081359, -1.6722404284676147, 0.0, 0.5673160297160309, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [0.0, 0.0, 0.0, 0.0, 1.2853922087704452, 0.0, 0.0, 0.0, 1.4094531977798919, 0.0, 0.67505524455302557, 0.0, 0.88810228275018444, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [1.4006186590492935, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0327107270046221, 0.0, 1.3586336251349058, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [-0.49799106771842511, -0.6927733325411719, 0.0, 0.0, 0.0, -0.51815299787393887, 0.0, 0.0, 0.0, 0.0, 0.31693527615574874, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [0.0, 0.0, 0.0, 0.0, 0.57780670315421168, 0.0, 0.0, 0.0, 0.0, -0.14203085211262922, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.097193163260317308, 0.0, 0.0, -0.21231552691634767, ...], [0.081994808359219823, 0.0, -1.9734029545718395, 0.0, 0.70415578766968856, 0.0, 0.0, 0.0, 1.5546002587905325, 0.0, 0.060456797147577089, 0.0, 0.97956004553441611, 0.0, 1.4821905559421136, 0.0, 0.08033393877138699, 0.0, 0.0, 0.0, ...], [0.0, 1.0782452208466544, 0.86236104722143403, 0.0, 1.1874463674964535, 0.0, 0.0, 0.0, 0.0, -2.8755134316705075, 0.0, 0.0, -0.14817453784467591, 0.0, 0.0, 0.0, 1.6684245338864909, 0.0, 0.0, 0.0, ...], [0.67769038560271644, 0.0, -1.3106287858312122, 0.76387176520133626, 0.0, 0.70512771752954295, 0.0, 0.0, 1.0432813608484763, 0.0, -0.18443853122412926, 3.3937810207873071, 0.65737589554566001, 1.9871135209908526, 2.3565294658158655, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [0.0, 0.0, -0.39102856598184921, -0.3961470448135106, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4249813930270267, 0.0, 0.55910527074500627, 0.0, -0.51584914777187663, 0.0, 0.0, 0.0, 0.0, 0.0, ...], ...]<br>
+<strong>Matrix_R</strong> = [[0.0, 0.227807382825471, 1.6356570086868811, 0.227807382825471, -2.5878918688973496, 0.227807382825471, -1.1800422430359392, 0.0, 0.0, 0.227807382825471, 0.0, 0.0, 1.6356570086868811, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [0.0, 0.0, -0.71375370148205952, 0.0, 0.0, 1.022691870780265, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [0.4486722227929566, 0.0, 1.5004775975371005, -1.6549385266953311, 0.4486722227929566, 1.5004775975371005, 0.4486722227929566, -2.706743901439475, 0.0, 0.0, 1.5004775975371005, 0.0, 0.0, -2.706743901439475, 0.0, 1.5004775975371005, 0.0, 0.0, -0.60313315195118733, 0.0, ...], [0.6563010818609194, 0.0, 0.6563010818609194, -1.1408020688467584, 0.6563010818609194, 0.0, 0.6563010818609194, 0.0, 0.0, 0.0, 0.0, 0.0, 0.6563010818609194, -2.0393536442005971, 0.0, -0.24225049349291949, 0.0, 0.6563010818609194, 0.6563010818609194, 0.6563010818609194, ...], [0.0, 0.0, 0.0, 0.0, 1.642000498703672, 1.642000498703672, 0.0, 0.0, 0.0, 0.0, 0.0, -0.65258994179248597, -0.65258994179248597, 0.0, 0.0, 1.642000498703672, 0.0, 0.0, 1.642000498703672, 1.642000498703672, ...], [1.7685032708026294, -1.5631714303723618, -0.45261319664736482, -1.5631714303723618, 0.0, 1.7685032708026294, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.5631714303723618, -0.45261319664736482, 0.0, 0.0, 0.0, 1.7685032708026294, ...], [0.0, -2.8643347964326114, 0.0, 0.0, -0.17992052741410888, -0.17992052741410888, 0.0, 0.0, -1.5221276619233601, 0.0, -1.5221276619233601, 0.0, -1.5221276619233601, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [-0.019982684073250576, -1.5301026661803407, -0.019982684073250576, -1.5301026661803407, 1.4901372980338397, 1.4901372980338397, 0.0, -0.019982684073250576, 0.0, -1.5301026661803407, 1.4901372980338397, 0.0, 1.4901372980338397, -1.5301026661803407, -3.0402226482874313, -0.019982684073250576, 0.0, -0.019982684073250576, 1.4901372980338397, -0.019982684073250576, ...], [0.23918210220188552, 0.0, 0.0, -2.0798443669729156, 2.5582085713766869, 0.0, 0.23918210220188552, 0.0, 0.0, 0.0, 0.23918210220188552, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -2.0798443669729156, ...], [0.58734117255190088, 0.58734117255190088, 0.0, -0.64242311737837876, -0.64242311737837876, 1.2022233175170407, 0.0, 0.0, -0.027540972413238916, 0.58734117255190088, 0.0, 0.0, 0.0, -1.2573052623435186, -0.64242311737837876, 0.58734117255190088, -1.2573052623435186, 0.0, 1.2022233175170407, -0.027540972413238916, ...], [1.9970370009857386, 0.0, 0.0, 0.0, -0.53360828666338933, 0.73171435716117461, 0.0, 0.0, 0.73171435716117461, 0.73171435716117461, -1.7989309304879533, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...], [2.1066373138590415, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.1066373138590415, -0.44482779934075395, 0.0, 2.1066373138590415, 0.0, ...], [0.0, 0.0, 0.0, 0.0, 0.0, 3.8956686833340646, 1.4415165464324826, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4415165464324826, 0.0, 0.0, 0.0, 0.0, ...], [0.0, -0.085094525466615986, 0.0, -2.3826467130652511, -1.2338706192659337, -0.085094525466615986, 1.0636815683327017, 0.0, 0.0, 1.0636815683327017, -0.085094525466615986, 0.0, 0.0, -2.3826467130652511, 0.0, -0.085094525466615986, -1.2338706192659337, 0.0, -1.2338706192659337, 1.0636815683327017, ...], [-1.5643027451557072, -1.5643027451557072, 0.0, 0.51963464787312097, -1.5643027451557072, 2.6035720409019492, 1.561603344387535, 0.0, 0.0, 2.6035720409019492, 1.561603344387535, 0.0, 0.0, 0.0, 0.0, 0.51963464787312097, 0.0, 0.0, 0.51963464787312097, 0.0, ...], [0.0, 0.0, 0.0, 0.0, 0.0, 2.7856035221931701, 0.0, 0.0, 0.0, 0.0, 1.022686607798192, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.022686607798192, 1.022686607798192, ...], [0.073815842834696666, -1.4217573206856793, 0.0, 0.0, 0.073815842834696666, 1.5693890063550726, -1.4217573206856793, 0.0, 0.0, 0.0, 0.073815842834696666, 0.0, 0.073815842834696666, 0.0, 0.0, 1.5693890063550726, -2.9173304842060555, 0.0, 0.0, 0.0, ...], [1.0147669695996833, 1.0147669695996833, 0.20152665652858381, 0.20152665652858381, 0.0, 1.0147669695996833, 1.0147669695996833, 0.0, 1.0147669695996833, 0.0, 0.20152665652858381, 0.0, 0.0, -2.2381942826847148, 0.0, 1.0147669695996833, 0.0, 0.0, 1.0147669695996833, 0.0, ...], [0.0, 0.0, 0.0, 0.0, 1.0066108203654802, 0.0, 0.0, 0.0, 0.0, 0.0, -4.1603502254554945, 0.0, 0.0, 0.0, 0.0, 2.7289311689724722, 0.0, 0.0, -2.4380298768485029, 0.0, ...], [0.0, 0.0, 0.0, -0.5092555456583987, -1.6350810239913334, 1.7423954110074704, 0.0, 0.0, 0.0, 0.0, 0.0, 1.7423954110074704, 0.0, -1.6350810239913334, -0.5092555456583987, 1.7423954110074704, 0.0, 0.0, 0.0, 0.0, ...], ...]<br>
+<strong>R_frob</strong> = array([[  1.00000000e+00,   5.60589490e-04],
+   ...5],
+       [  5.99900000e+03,   8.83404187e-05]])<br>
+<strong>U_mat</strong> = array([[  5.27546390e-08,   2.31971126e-08,   1....408829e-11,  -3.45559835e-10,  -9.07595559e-10]])<br>
+<strong>end_Time</strong> = 1510546209.998883<br>
+<strong>forbenius_norm_matrix</strong> = 919.35587367714686<br>
+<strong>forbenius_norm_matrix_col</strong> = array([ 0.00129067,  0.00066692,  0.0001576 , ...,  0.        ,
+        0.        ,  0.        ])<br>
+<strong>forbenius_norm_matrix_row</strong> = array([  3.48028945e-04,   5.60589490e-04,   8.1...7891326e-05,   1.54502938e-05,   7.02483798e-06])<br>
+<strong>i</strong> = 3705<br>
+<strong>idx</strong> = 1000208<br>
+<strong>means_mat</strong> = matrix([[ 3.60159363],
+        [ 3.8381877 ],
+  ...],
+        [ 4.23529412],
+        [ 4.5625    ]])<br>
+<strong>movie_map</strong> = {1: 170, 2: 1204, 3: 802, 4: 1913, 5: 2078, 6: 54, 7: 709, 8: 2472, 9: 1678, 10: 220, ...}<br>
+<strong>no_of_param</strong> = 900<br>
+<strong>pred_Ratings</strong> = [3.1791911099933019, 4.4337650181078416, 3.321502299520791, 4.2191523721459809, 3.1657038931949986, 3.7501643504622821, 4.1099975530743658, 3.1468733829483178, 3.7118441715510158, 3.7559646580940207, 3.6499480057919671, 3.3655658918476861, 2.9199529521553478, 4.0232668441628343, 3.9742932184666531, 3.2090806595839934, 3.5710269061357978, 3.9872987357945928, 3.7560177538390662, 3.5464905293066655, ...]<br>
+<strong>predictions</strong> = array([ 3.17919111,  4.43376502,  3.3215023 , ...,  3.79553144,
+        4.70077121,  3.813406  ])<br>
+<strong>row</strong> = userId            4521
+movieId           3751
+ra...imestamp    964835199
+Name: 1000208, dtype: int64<br>
+<strong>sel_frob_c</strong> = [0.0012906695446222585, 0.00066692323025589035, 0.0010426358804099855, 0.0010158668669175152, 0.0026544514047234643, 0.0011921808405376232, 0.000499207601590207, 0.00093656035506285652, 0.00054459646027338207, 0.0006296449137222945, 0.0023740917641952523, 5.1464774925244606e-05, 0.0013716716419158983, 0.0008425672883485691, 0.00059910673528670801, 0.00076884172910720498, 0.0013445892995974562, 0.00035688534354283576, 0.00014735548150076976, 0.00028177183025365917, ...]<br>
+<strong>sel_frob_r</strong> = [0.00056058948967443946, 0.00036849800432032029, 0.0010043537815370908, 0.0013761680497510677, 0.00021103142458431053, 0.00090089633031703879, 0.00061676313118361702, 0.00048723062937821855, 0.00020660749836161693, 0.0029388250045320158, 0.00069399274496354814, 0.00068271306330894993, 0.00018448222455261942, 0.00084195079633622618, 0.0010234064433208541, 0.00035751461586192794, 0.00049675490420370786, 0.0016800402741142576, 0.00037456709713444992, 0.00087662801346684836, ...]<br>
+<strong>selected_Columns</strong> = array([   0,    1,    3,    4,    5,    6,    8,... 3158, 3180, 3302, 3321, 3330, 3354, 3397, 3595])<br>
+<strong>selected_Columns1</strong> = array([   0,    5,    5,    5,    6,    6,    7,... 3086, 3122, 3135, 3152, 3196, 3230, 3394, 3495])<br>
+<strong>selected_Rows</strong> = array([   1,    5,    7,   18,   20,   27,   29,... 5814, 5823, 5843, 5855, 5870, 5903, 5947, 5999])<br>
+<strong>selected_Rows1</strong> = array([   0,   18,   18,   18,   32,   33,   35,... 5506, 5532, 5534, 5625, 5824, 5850, 5874, 5888])<br>
+<strong>start_time_user</strong> = 1510546187.977194<br>
+<strong>test</strong> =          userId  movieId  rating   timestamp  pr... 964835199    3.813406
+
+[200041 rows x 5 columns]<br>
+<strong>train</strong> = matrix([[ 0.39840637,  0.        ,  0.        , ... 0.        ,
+          0.        ,  0.        ]])<br>
+<strong>train2</strong> = matrix([[ 4.,  0.,  0., ...,  0.,  0.,  0.],
+   ....],
+        [ 0.,  0.,  0., ...,  0.,  0.,  0.]])<br>
+<strong>truth</strong> = array([4, 3, 3, ..., 5, 5, 4])<br>
+<strong>user_map</strong> = {1: 618, 2: 3041, 3: 2425, 4: 3967, 5: 4312, 6: 4208, 7: 4812, 8: 3630, 9: 1571, 10: 3220, ...}<br>
+<strong>y</strong> = array([  5.99900000e+03,   8.83404187e-05])</td></tr></table>
+</body></html>
