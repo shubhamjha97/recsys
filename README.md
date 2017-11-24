@@ -7,23 +7,17 @@ Course Assignment for CS F469- Information Retrieval @ BITS Pilani, Hyderabad Ca
 
 ## Table of Contents
 * [Instructions to run the scripts](#instructions-to-run-the-scripts)
-
-      * [Create the train matrix and the mappings](#create-the-train-matrix-and-the-mappings)
-      
-      * [Collaborative Filtering](#collaborative-filtering)
-      
-      * [Collaborative Filtering with Baseline Approach](#collaborative-filtering-with-baseline-approach)
-      
-      * [SVD](#svd)
-      
-      * [CUR](#cur)
-      
+  * [Create the train matrix and the mappings](#create-the-train-matrix-and-the-mappings)
+  * [Collaborative Filtering](#collaborative-filtering)
+  * [Collaborative Filtering with Baseline Approach](#collaborative-filtering-with-baseline-approach)
+  * [SVD](#svd)
+  * [CUR](#cur)
 * [Introduction](#introduction)
 * [Data](#data)
 * [Directory Structure](#directory-structure-)
 * [Basic Collaborative Filtering](#basic-collaborative-filtering)
 * [Collaborative Filtering with baseline](#collaborative-filtering-with-baseline)
-- [SVD](#svd-1)
+* [SVD](#svd-1)
 * [CUR](#cur-1)
 * [Machine specs](#machine-specs-)
 * [Results](#results)
