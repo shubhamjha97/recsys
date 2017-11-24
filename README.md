@@ -7,11 +7,17 @@ Course Assignment for CS F469- Information Retrieval @ BITS Pilani, Hyderabad Ca
 
 ## Table of Contents
 * [Instructions to run the scripts](#instructions-to-run-the-scripts)
+
       * [Create the train matrix and the mappings](#create-the-train-matrix-and-the-mappings)
+      
       * [Collaborative Filtering](#collaborative-filtering)
+      
       * [Collaborative Filtering with Baseline Approach](#collaborative-filtering-with-baseline-approach)
+      
       * [SVD](#svd)
+      
       * [CUR](#cur)
+      
 * [Introduction](#introduction)
 * [Data](#data)
 * [Directory Structure](#directory-structure-)
@@ -55,7 +61,7 @@ Collaborative filtering is a method of making automatic predictions (filtering) 
 3. SVD Decomposition Approach
 4. CUR Decomposition Approach
 
-*More on [Collaborative Filtering](https://en.wikipedia.org/wiki/Collaborative_filtering).*
+* More on [Collaborative Filtering](https://en.wikipedia.org/wiki/Collaborative_filtering). *
 
 ## Data
 We used the MovieLens 1M dataset, which can be found [here](https://grouplens.org/datasets/movielens/). The dataset contains *1 million* ratings from 6000 users on 4000 movies. The ratings range from 1 to 5, with zeroes indicating missing ratings. The data can be found in the folder *data*.
@@ -92,7 +98,8 @@ recsys_final/
 
 ## Basic Collaborative Filtering
 While predicting ratings, the ratings of the 10 most similar users are used.
-More on [Collaborative Filtering](https://en.wikipedia.org/wiki/)
+
+*More on [Collaborative Filtering](https://en.wikipedia.org/wiki/)*
 
 ## Collaborative Filtering with baseline
 While predicting ratings, the ratings of the 10 most similar users are used.
@@ -100,14 +107,19 @@ While predicting ratings, the ratings of the 10 most similar users are used.
 
 ## SVD
 No. of singular values retained= 1088 (90% energy)
-More on [SVD](https://en.wikipedia.org/wiki/Singular-value_decomposition)
+
+*More on [SVD](https://en.wikipedia.org/wiki/Singular-value_decomposition)*
 
 ## CUR
 No. of columns and rows retained= 900
-More on [CUR](https://en.wikipedia.org/wiki/CUR_matrix_approximation)
+
+*More on [CUR](https://en.wikipedia.org/wiki/CUR_matrix_approximation)*
+
 ## Machine specs:
 Processor: i7-7500U
+
 Ram: 16 GB DDR4
+
 OS: Ubuntu 16.04 LTS
 
 ## Results
